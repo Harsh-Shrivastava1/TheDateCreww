@@ -145,7 +145,7 @@ export default function Customers() {
   };
 
   return (
-    <div className="bg-[#FAFAF9] min-h-screen flex flex-col">
+    <div className="bg-[#F7F7F5] min-h-screen flex flex-col">
       <PageHeader
         title="Candidate Directory"
         subtitle={loading ? 'Synchronizing Firestore...' : `${filtered.length} client files mapped`}
@@ -161,11 +161,11 @@ export default function Customers() {
           <div className="flex items-center gap-3">
             {/* Search Input */}
             <div className="relative flex-1 max-w-sm">
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#9B9EA8]" />
               <input
                 type="text"
                 placeholder="Search candidates by name, city, caste..."
-                className="input input-sm pl-9"
+                className="input input-sm pl-9 bg-white border-[#E8E8E5] shadow-3xs"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
@@ -179,12 +179,12 @@ export default function Customers() {
             {/* Filter Drawer Toggle */}
             <button
               onClick={() => setShowFilters(v => !v)}
-              className={`btn btn-sm gap-1.5 shadow-3xs ${showFilters ? 'btn-primary' : 'btn-secondary'}`}
+              className={`btn btn-sm gap-1.5 shadow-3xs ${showFilters ? 'btn-primary' : 'bg-white border-[#E8E8E5] text-[#3A3D47] hover:bg-[#FAFAF9]'}`}
             >
               <SlidersHorizontal size={13} />
               Filters
               {activeFiltersCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-indigo-150 text-indigo-700 ml-1">
+                <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EEF0FF] text-[#5B5EF4] ml-1">
                   {activeFiltersCount}
                 </span>
               )}
@@ -198,15 +198,15 @@ export default function Customers() {
               {showFilters && (
                 <motion.div
                   initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 220 }}
+                  animate={{ opacity: 1, width: 240 }}
                   exit={{ opacity: 0, width: 0 }}
-                  className="card p-4 bg-white border border-gray-200 overflow-y-auto max-h-[70vh] flex-shrink-0 scrollbar-none"
+                  className="card p-5 bg-white border border-[#E8E8E5] overflow-y-auto max-h-[70vh] flex-shrink-0 scrollbar-none shadow-3xs rounded-2xl"
                 >
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-xs font-bold text-gray-900">Filters</span>
+                  <div className="flex justify-between items-center mb-5">
+                    <span className="text-[13px] font-bold text-[#0F1117] tracking-tight">Filters</span>
                     {activeFiltersCount > 0 && (
-                      <button onClick={handleClearFilters} className="text-[10px] font-bold text-indigo-600 hover:underline">
-                        Clear all
+                      <button onClick={handleClearFilters} className="text-[10px] font-bold text-[#5B5EF4] hover:underline uppercase tracking-wider">
+                        Clear
                       </button>
                     )}
                   </div>
@@ -322,16 +322,16 @@ export default function Customers() {
                       <div
                         key={c.id}
                         onClick={() => setSelectedCustomerId(c.id)}
-                        className={`card p-4 bg-white border cursor-pointer hover:border-gray-400 hover:shadow-2xs transition-all relative ${
-                          isSelected ? 'border-indigo-600 ring-1 ring-indigo-600' : 'border-gray-200'
+                        className={`card p-4 bg-white border cursor-pointer hover:border-[#BEBEBE] hover:shadow-xs transition-all duration-200 relative ${
+                          isSelected ? 'border-[#5B5EF4] ring-1 ring-[#5B5EF4] shadow-sm' : 'border-[#E8E8E5]'
                         }`}
                       >
-                        <div className="flex items-start gap-3">
+                        <div className="flex items-start gap-3.5">
                           <Avatar name={`${c.firstName} ${c.lastName}`} photo={c.photo} size="md" />
                           
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-2">
-                              <h4 className="text-xs font-bold text-gray-900 leading-tight">
+                              <h4 className="text-[13.5px] font-bold text-[#0F1117] leading-tight">
                                 {c.firstName} {c.lastName}
                               </h4>
                               <span className="flex-shrink-0">
@@ -339,27 +339,27 @@ export default function Customers() {
                               </span>
                             </div>
 
-                            <p className="text-[10px] text-gray-400 font-semibold mt-0.5 leading-none">
+                            <p className="text-[11.5px] text-[#5C5F6A] font-semibold mt-0.5 leading-none">
                               {c.gender} · {c.age} yrs · {c.city || 'Delhi'}
                             </p>
 
-                            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-medium mt-2 leading-tight truncate">
-                              <Briefcase size={10} className="text-gray-400 flex-shrink-0" />
+                            <div className="flex items-center gap-1.5 text-[12px] text-[#5C5F6A] font-medium mt-2.5 leading-tight truncate">
+                              <Briefcase size={12} className="text-[#9B9EA8] flex-shrink-0" />
                               <span className="truncate">{c.designation || 'Onboarding Specialist'}</span>
                             </div>
                             
-                            <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-medium mt-1 leading-tight truncate">
-                              <GraduationCap size={10} className="text-gray-400 flex-shrink-0" />
+                            <div className="flex items-center gap-1.5 text-[12px] text-[#5C5F6A] font-medium mt-1 leading-tight truncate">
+                              <GraduationCap size={12} className="text-[#9B9EA8] flex-shrink-0" />
                               <span className="truncate">{c.degree || 'Bachelors'}</span>
                             </div>
 
                             {/* Recommended Next Action stamp */}
-                            <div className="mt-3.5 pt-2 border-t border-gray-100 flex items-center justify-between">
+                            <div className="mt-4 pt-2.5 border-t border-[#F0F0EE] flex items-center justify-between group-hover:border-[#E8E8E5] transition-colors">
                               <div className="min-w-0">
-                                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Next Task</span>
-                                <span className="text-[10.5px] text-gray-700 font-semibold truncate block leading-tight mt-0.5">{action.title}</span>
+                                <span className="text-[9.5px] font-bold text-[#9B9EA8] uppercase tracking-wider block">Next Task</span>
+                                <span className="text-[11.5px] text-[#0F1117] font-bold truncate block leading-tight mt-0.5">{action.title}</span>
                               </div>
-                              <ChevronRight size={14} className="text-gray-300 flex-shrink-0" />
+                              <ChevronRight size={14} className="text-[#C8CAD0] flex-shrink-0" />
                             </div>
 
                           </div>
@@ -378,27 +378,27 @@ export default function Customers() {
           {activeCustomer && (
             <motion.div
               initial={{ opacity: 0, x: 20, width: 0 }}
-              animate={{ opacity: 1, x: 0, width: 340 }}
+              animate={{ opacity: 1, x: 0, width: 360 }}
               exit={{ opacity: 0, x: 20, width: 0 }}
-              className="card bg-white border border-gray-200 overflow-hidden flex flex-col justify-between flex-shrink-0 shadow-sm"
+              className="card bg-white border border-[#E8E8E5] overflow-hidden flex flex-col justify-between flex-shrink-0 shadow-sm rounded-2xl"
             >
               
               {/* Header */}
-              <div className="p-5 border-b border-gray-150 bg-gray-50/50 flex items-start justify-between">
+              <div className="p-5 border-b border-[#E8E8E5] bg-[#FAFAF9] flex items-start justify-between">
                 <div className="flex gap-3">
-                  <Avatar name={`${activeCustomer.firstName} ${activeCustomer.lastName}`} photo={activeCustomer.photo} size="md" />
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-900 leading-tight">
+                  <Avatar name={`${activeCustomer.firstName} ${activeCustomer.lastName}`} photo={activeCustomer.photo} size="lg" />
+                  <div className="mt-0.5">
+                    <h3 className="text-[15px] font-extrabold text-[#0F1117] leading-tight tracking-tight">
                       {activeCustomer.firstName} {activeCustomer.lastName}
                     </h3>
-                    <p className="text-[10px] text-gray-400 font-semibold mt-0.5 uppercase tracking-wider">{activeCustomer.gender} File</p>
+                    <p className="text-[11px] text-[#5C5F6A] font-bold mt-1 uppercase tracking-wider">{activeCustomer.gender} File</p>
                   </div>
                 </div>
                 <button 
                   onClick={() => setSelectedCustomerId(null)}
-                  className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-700 transition-colors"
+                  className="p-1 rounded-lg hover:bg-[#E8E8E5] text-[#9B9EA8] hover:text-[#0F1117] transition-colors"
                 >
-                  <X size={14} />
+                  <X size={15} />
                 </button>
               </div>
 
@@ -406,60 +406,60 @@ export default function Customers() {
               <div className="flex-1 overflow-y-auto p-5 space-y-5 scrollbar-none">
                 
                 {/* Recommended Next Action Block */}
-                <div className="p-4 rounded-xl border border-gray-150 bg-gray-50 flex flex-col justify-between">
+                <div className="p-4 rounded-xl border border-[#F0F0EE] bg-[#FAFAF9] flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <AlertCircle size={13} className="text-indigo-600" />
-                      <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wider">Next Matchmaker Action</span>
+                      <AlertCircle size={13} className="text-[#5B5EF4]" />
+                      <span className="text-[10.5px] font-bold text-[#5B5EF4] uppercase tracking-wider">Next Matchmaker Action</span>
                     </div>
-                    <h4 className="text-xs font-bold text-gray-800 mt-2">
+                    <h4 className="text-[13px] font-bold text-[#0F1117] mt-2">
                       {getNextAction(activeCustomer.status, activeCustomer.firstName).title}
                     </h4>
-                    <p className="text-[11px] text-gray-500 mt-1 leading-normal font-medium">
+                    <p className="text-[12px] text-[#5C5F6A] mt-1 leading-normal font-medium">
                       {getNextAction(activeCustomer.status, activeCustomer.firstName).desc}
                     </p>
                   </div>
 
                   <button
                     onClick={() => navigate(`/customers/${activeCustomer.id}`)}
-                    className="btn btn-primary btn-xs font-bold gap-1 mt-4 shadow-xs py-1.5 w-full justify-center text-center"
+                    className="btn btn-primary btn-sm font-bold gap-1 mt-4 py-2 w-full justify-center text-center shadow-3xs"
                   >
-                    Start Next Task <ArrowRight size={11} />
+                    Start Next Task <ArrowRight size={13} className="mt-px opacity-80" />
                   </button>
                 </div>
 
                 {/* Info List */}
-                <div className="space-y-3.5 border-t border-gray-100 pt-4">
-                  <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Quick Demographics</h4>
+                <div className="space-y-3 border-t border-[#E8E8E5] pt-4">
+                  <h4 className="text-[11px] font-bold text-[#9B9EA8] uppercase tracking-wider">Quick Demographics</h4>
                   
-                  <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="grid grid-cols-2 gap-y-3 gap-x-2 text-xs">
                     <div>
-                      <span className="text-[10px] text-gray-400 font-semibold block">Religion</span>
-                      <span className="text-gray-700 font-bold block mt-0.5">{activeCustomer.religion || '—'}</span>
+                      <span className="text-[11px] text-[#5C5F6A] font-semibold block">Religion</span>
+                      <span className="text-[#0F1117] font-bold block mt-0.5">{activeCustomer.religion || '—'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-400 font-semibold block">Caste</span>
-                      <span className="text-gray-700 font-bold block mt-0.5">{activeCustomer.caste || '—'}</span>
+                      <span className="text-[11px] text-[#5C5F6A] font-semibold block">Caste</span>
+                      <span className="text-[#0F1117] font-bold block mt-0.5">{activeCustomer.caste || '—'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-400 font-semibold block">Marital Status</span>
-                      <span className="text-gray-700 font-bold block mt-0.5">{activeCustomer.maritalStatus || '—'}</span>
+                      <span className="text-[11px] text-[#5C5F6A] font-semibold block">Marital Status</span>
+                      <span className="text-[#0F1117] font-bold block mt-0.5">{activeCustomer.maritalStatus || '—'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-gray-400 font-semibold block">Education</span>
-                      <span className="text-gray-700 font-bold block mt-0.5">{activeCustomer.degree || '—'}</span>
+                      <span className="text-[11px] text-[#5C5F6A] font-semibold block">Education</span>
+                      <span className="text-[#0F1117] font-bold block mt-0.5">{activeCustomer.degree || '—'}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* AI Summary Widget Preview if available */}
                 {activeCustomer.designation && (
-                  <div className="border-t border-gray-100 pt-4 space-y-2">
-                    <div className="flex items-center gap-1">
-                      <Sparkles size={12} className="text-[#4F46E5] fill-none" />
-                      <span className="text-[10px] font-bold text-[#4F46E5] uppercase tracking-wider">AI Intelligence Context</span>
+                  <div className="border-t border-[#E8E8E5] pt-4 space-y-2.5">
+                    <div className="flex items-center gap-1.5">
+                      <Sparkles size={12} className="text-[#5B5EF4] fill-none" />
+                      <span className="text-[10.5px] font-bold text-[#5B5EF4] uppercase tracking-wider">AI Intelligence Context</span>
                     </div>
-                    <p className="text-[11.5px] text-gray-600 font-medium leading-relaxed italic bg-[#EEF2FF]/40 border border-[#C7D2FE]/20 p-3 rounded-lg">
+                    <p className="text-[12.5px] text-[#3A3D47] font-medium leading-relaxed bg-[#EEF0FF]/60 border border-[#C7D2FE]/40 p-3.5 rounded-xl">
                       "{activeCustomer.firstName} is a highly accomplished {activeCustomer.designation} based in {activeCustomer.city}, seeking compatibility alignment."
                     </p>
                   </div>
@@ -467,10 +467,10 @@ export default function Customers() {
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-gray-150 bg-gray-50 flex gap-2">
+              <div className="p-4 border-t border-[#E8E8E5] bg-[#FAFAF9] flex gap-2">
                 <button
                   onClick={() => navigate(`/customers/${activeCustomer.id}`)}
-                  className="btn btn-secondary btn-sm flex-1 font-bold shadow-3xs justify-center"
+                  className="btn btn-secondary font-bold shadow-3xs justify-center flex-1"
                 >
                   View CRM Profile
                 </button>

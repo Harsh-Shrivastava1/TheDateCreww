@@ -22,8 +22,8 @@ export default function Login() {
     } catch (err) {
       const msg =
         err.code === 'auth/invalid-credential' ||
-        err.code === 'auth/user-not-found' ||
-        err.code === 'auth/wrong-password'
+          err.code === 'auth/user-not-found' ||
+          err.code === 'auth/wrong-password'
           ? 'Incorrect email or password.'
           : 'Sign in failed. Please try again.';
       toast.error(msg);
@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <div className="h-screen w-full flex flex-col lg:flex-row bg-[#FAFAF9] font-sans overflow-hidden relative">
-      
+
       {/* ── Top Left Brand Name ── */}
       <div className="absolute top-6 left-8 flex items-center gap-2 z-20 select-none">
         <span className="text-[15px] sm:text-base font-bold text-gray-900 tracking-tight">TDC Matchmaker</span>

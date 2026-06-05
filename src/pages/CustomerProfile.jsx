@@ -494,7 +494,8 @@ export default function CustomerProfile() {
         </button>
 
         {/* Profile Header Block */}
-        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 pb-6">
+        <div className="flex flex-col gap-4 pb-6">
+          {/* Top row: avatar + identity + status badges */}
           <div className="flex items-start gap-4">
             <Avatar
               name={`${customer.firstName} ${customer.lastName}`}
@@ -502,7 +503,7 @@ export default function CustomerProfile() {
               size="xl"
               className="ring-4 ring-gray-50 shadow-sm rounded-xl"
             />
-            <div className="space-y-1">
+            <div className="space-y-1 flex-1 min-w-0">
               <div className="flex items-center gap-3.5 flex-wrap">
                 <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">
                   {customer.firstName} {customer.lastName}
@@ -581,40 +582,106 @@ export default function CustomerProfile() {
             </div>
           </div>
 
-          {/* AI Intelligence Brief Summary */}
-          <div className="max-w-md w-full">
-            {aiSummary ? (
-              <motion.div
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-3.5 rounded-xl bg-indigo-50/20 border border-indigo-100/50 flex gap-2.5"
-              >
-                <Sparkles size={14} className="text-indigo-600 flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">AI Executive Brief</p>
-                  <p className="text-[11.5px] text-gray-600 font-medium leading-relaxed">
+          {/* AI Executive Brief — full-width below profile */}
+          {aiSummary ? (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              style={{
+                background: 'linear-gradient(135deg, #eef2ff 0%, #f5f3ff 50%, #fdf4ff 100%)',
+                border: '1px solid rgba(99,102,241,0.18)',
+                borderRadius: '14px',
+                padding: '14px 18px',
+                position: 'relative',
+                overflow: 'hidden',
+              }}
+            >
+              {/* decorative orb */}
+              <div style={{
+                position: 'absolute', top: '-18px', right: '-18px',
+                width: '80px', height: '80px',
+                background: 'radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 70%)',
+                borderRadius: '50%', pointerEvents: 'none'
+              }} />
+
+              <div className="flex items-start gap-3 relative">
+                {/* icon badge */}
+                <div style={{
+                  width: '30px', height: '30px', flexShrink: 0,
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+                  borderRadius: '8px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 2px 8px rgba(99,102,241,0.35)'
+                }}>
+                  <Sparkles size={14} color="white" />
+                </div>
+
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  {/* header row */}
+                  <div className="flex items-center gap-2">
+                    <span style={{
+                      fontSize: '9px', fontWeight: 800, letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      background: 'linear-gradient(90deg,#6366f1,#8b5cf6)',
+                      WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                    }}>AI Executive Brief</span>
+                    <span style={{
+                      fontSize: '9px', fontWeight: 700, color: '#6366f1',
+                      background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.2)',
+                      borderRadius: '4px', padding: '1px 6px', letterSpacing: '0.04em'
+                    }}>Gemini AI · Confidential</span>
+                  </div>
+
+                  {/* brief text */}
+                  <p style={{
+                    fontSize: '12px', lineHeight: '1.7', color: '#374151', fontWeight: 500,
+                  }}>
                     {aiSummary}
                   </p>
                 </div>
-              </motion.div>
-            ) : (
-              <div className="p-4 rounded-xl border border-dashed border-gray-200 text-center bg-gray-50/30">
-                <p className="text-xs text-gray-400 font-medium mb-2.5">Generate real-time AI summary analysis for matching appeal.</p>
-                <button
-                  onClick={handleAISummary}
-                  disabled={summaryLoading}
-                  className="btn btn-secondary btn-xs gap-1.5 shadow-3xs hover:border-indigo-200"
-                >
-                  {summaryLoading ? (
-                    <span className="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <Sparkles size={12} className="text-indigo-600" />
-                  )}
-                  Analyze Client Dossier
-                </button>
               </div>
-            )}
-          </div>
+            </motion.div>
+          ) : (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, #f8faff 0%, #faf8ff 100%)',
+                border: '1.5px dashed rgba(99,102,241,0.25)',
+                borderRadius: '14px',
+                padding: '14px 18px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+              }}
+            >
+              <div style={{
+                width: '30px', height: '30px', flexShrink: 0,
+                background: 'rgba(99,102,241,0.08)',
+                border: '1px solid rgba(99,102,241,0.2)',
+                borderRadius: '8px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Sparkles size={13} color="#6366f1" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, margin: 0 }}>
+                  Generate a real-time AI personality brief for this client — used in match appeals and dossier summaries.
+                </p>
+              </div>
+              <button
+                onClick={handleAISummary}
+                disabled={summaryLoading}
+                className="btn btn-secondary btn-xs gap-1.5 shadow-3xs hover:border-indigo-200 flex-shrink-0"
+              >
+                {summaryLoading ? (
+                  <span className="w-3 h-3 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Sparkles size={11} className="text-indigo-600" />
+                )}
+                Analyze Client
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tab System bar */}

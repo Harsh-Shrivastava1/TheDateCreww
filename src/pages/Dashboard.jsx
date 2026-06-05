@@ -12,6 +12,7 @@ import { db } from '../services/firebase/config';
 import { getDashboardStats } from '../services/firebase/firestore';
 import Avatar from '../components/ui/Avatar';
 import { Skeleton } from '../components/ui/Skeleton';
+import PageHeader from '../components/layout/PageHeader';
 
 /* ─── Sparkline ─────────────────────────────────── */
 function Sparkline({ color, path }) {
@@ -50,10 +51,10 @@ const STATUS_COLORS = {
 };
 
 /* ─── Dot severity colours ───────────────────────── */
-const DOT = {
-  3: 'bg-red-500',
-  2: 'bg-amber-400',
-  1: 'bg-blue-400',
+const QUEUE_BORDER = {
+  3: 'border-l-[#E5484D]',
+  2: 'border-l-[#F59E0B]',
+  1: 'border-l-[#3B82F6]',
 };
 
 export default function Dashboard() {
@@ -168,9 +169,9 @@ export default function Dashboard() {
 
   /* kpis */
   const kpis = [
-    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, color: '#6366F1', bg: 'linear-gradient(135deg,#EEF2FF 0%,#E0E7FF 100%)', iconBg: '#6366F1', delta: '+12%', path: 'M5,28 Q20,15 40,22 T75,8 T95,18' },
-    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, color: '#10B981', bg: 'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)', iconBg: '#10B981', delta: '+18%', path: 'M5,28 Q20,22 40,12 T75,28 T95,8' },
-    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, color: '#EC4899', bg: 'linear-gradient(135deg,#FDF2F8 0%,#FCE7F3 100%)', iconBg: '#EC4899', delta: '+8%', path: 'M5,18 Q20,8 40,28 T75,12 T95,22' },
+    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, color: '#5B5EF4', bg: 'linear-gradient(135deg,#EEF0FF 0%,#E0E7FF 100%)', iconBg: '#5B5EF4', delta: '+12%', path: 'M5,28 Q20,15 40,22 T75,8 T95,18' },
+    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, color: '#0EA472', bg: 'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)', iconBg: '#0EA472', delta: '+18%', path: 'M5,28 Q20,22 40,12 T75,28 T95,8' },
+    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, color: '#E8445A', bg: 'linear-gradient(135deg,#FFF0F2 0%,#FFE4E8 100%)', iconBg: '#E8445A', delta: '+8%', path: 'M5,18 Q20,8 40,28 T75,12 T95,22' },
     { label: 'Meetings Scheduled', value: stats?.meetingsScheduled ?? 0, icon: Calendar, color: '#3B82F6', bg: 'linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%)', iconBg: '#3B82F6', delta: '+22%', path: 'M5,28 Q20,12 40,28 T75,8 T95,18' },
   ];
 
@@ -189,23 +190,13 @@ export default function Dashboard() {
     'grid-cols-1';
 
   return (
-    <div className="min-h-screen" style={{ background: '#F8F8F6' }}>
+    <div className="min-h-screen bg-transparent">
 
       {/* ── Header ── */}
-      <div className="sticky top-0 z-30 bg-white border-b border-gray-200 px-8 py-4">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-[22px] font-extrabold text-gray-900 tracking-tight">
-                Hello, Admin 👋
-              </h1>
-            </div>
-            <p className="text-[12px] text-gray-400 font-medium mt-0.5">{formatDate()}</p>
-          </div>
-
-
-        </div>
-      </div>
+      <PageHeader 
+        title="Welcome back, Admin 👋"
+        subtitle={formatDate()}
+      />
 
       <div className="px-8 py-6 space-y-6">
 
@@ -218,29 +209,32 @@ export default function Dashboard() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.06, ease: 'easeOut' }}
-                className="rounded-2xl p-5 flex flex-col gap-3 cursor-default hover:scale-[1.015] transition-transform duration-200"
-                style={{ background: kpi.bg, border: '1px solid rgba(0,0,0,0.06)' }}
+                className="rounded-[18px] p-6 flex flex-col gap-4 cursor-default transition-all duration-300 relative overflow-hidden group"
+                style={{ background: kpi.bg, border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 12px rgba(15,17,23,0.03)' }}
               >
-                <div className="flex items-start justify-between">
+                {/* Subtle gradient overlay effect on hover */}
+                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                
+                <div className="flex items-start justify-between relative z-10">
                   <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm"
+                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-3xs"
                     style={{ background: kpi.iconBg }}
                   >
-                    <kpi.icon size={17} color="white" strokeWidth={2.5} />
+                    <kpi.icon size={18} color="white" strokeWidth={2.5} />
                   </div>
                   <Sparkline color={kpi.color} path={kpi.path} />
                 </div>
-                <div>
+                <div className="relative z-10">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-[32px] font-black text-gray-900 tracking-tight leading-none">
+                    <span className="text-[34px] font-black text-[#0F1117] tracking-tight leading-none">
                       {loading ? <span className="text-xl text-gray-400">—</span> : kpi.value}
                     </span>
-                    <span className="inline-flex items-center gap-0.5 text-[11px] font-bold text-emerald-600">
+                    <span className="inline-flex items-center gap-0.5 text-[11.5px] font-bold text-emerald-600">
                       <TrendingUp size={11} strokeWidth={3} />
                       {kpi.delta}
                     </span>
                   </div>
-                  <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider mt-1">{kpi.label}</p>
+                  <p className="text-[11.5px] font-bold text-[#5C5F6A] uppercase tracking-wider mt-1.5">{kpi.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -288,21 +282,20 @@ export default function Dashboard() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.04 }}
                         onClick={() => navigate(`/customers/${item.customer.id}`)}
-                        className="flex items-center justify-between px-5 py-3.5 hover:bg-gray-50/80 cursor-pointer transition-colors group"
+                        className={`flex items-center justify-between px-5 py-3.5 hover:bg-[#F5F5F3] cursor-pointer transition-colors group border-l-4 ${QUEUE_BORDER[item.severity]} border-t border-t-transparent`}
                       >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${DOT[item.severity]}`} />
+                        <div className="flex items-center gap-3.5 min-w-0">
                           <Avatar name={item.title} photo={item.customer.photo} size="sm" />
                           <div className="min-w-0">
-                            <h4 className="text-[13px] font-bold text-gray-800 truncate">{item.title}</h4>
-                            <p className="text-[11px] text-gray-400 truncate mt-0.5">{item.description}</p>
+                            <h4 className="text-[13.5px] font-bold text-[#0F1117] truncate">{item.title}</h4>
+                            <p className="text-[11.5px] text-[#5C5F6A] font-medium truncate mt-0.5">{item.description}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0 ml-3">
-                          <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-extrabold uppercase tracking-wider ${item.tagColor}`}>
+                          <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider ${item.tagColor}`}>
                             {item.type}
                           </span>
-                          <ChevronRight size={14} className="text-gray-300 group-hover:text-gray-500 transition-colors" />
+                          <ChevronRight size={14} className="text-[#C8CAD0] group-hover:text-[#5C5F6A] transition-colors" />
                         </div>
                       </motion.div>
                     ))

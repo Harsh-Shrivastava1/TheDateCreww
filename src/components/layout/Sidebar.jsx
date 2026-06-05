@@ -21,8 +21,8 @@ import clsx from 'clsx';
 
 const NAV_ITEMS = [
   { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/customers',  icon: Users,           label: 'Customers', badge: 3 },
-  { to: '/matches',    icon: Heart,           label: 'Matches', badge: 12 },
+  { to: '/customers',  icon: Users,           label: 'Customers' },
+  { to: '/matches',    icon: Heart,           label: 'Matches' },
   { to: '/activities', icon: Activity,        label: 'Activities' },
   { to: '/notes',      icon: FileText,        label: 'Notes' },
   { to: '/calendar',   icon: Calendar,        label: 'Calendar' },
@@ -107,11 +107,11 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
       style={{ userSelect: 'none' }}
     >
       {/* Workspace Switcher */}
-      <div className="px-2 pt-3 pb-2 border-b border-[#E5E7EB] flex-shrink-0">
-        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F5F7FA] active:bg-[#EEF2FF] transition-all duration-150 cursor-pointer border border-transparent hover:border-[#E5E7EB]/50 group/workspace">
+      <div className="px-2 pt-3 pb-2 border-b border-[#E8E8E5] flex-shrink-0">
+        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F5F5F3] active:bg-[#EEF0FF] transition-all duration-150 cursor-pointer border border-transparent hover:border-[#E8E8E5] group/workspace">
           {/* Logo icon */}
-          <div className="w-8 h-8 rounded-lg bg-[#EEF2FF] text-[#4F46E5] flex items-center justify-center font-bold flex-shrink-0 shadow-sm border border-[#EEF2FF] transition-transform duration-200 group-hover/workspace:scale-105">
-            <Heart size={16} className="fill-[#4F46E5] text-[#4F46E5]" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#EEF0FF] to-[#E0E7FF] text-[#5B5EF4] flex items-center justify-center font-bold flex-shrink-0 shadow-3xs border border-[#C7D2FE] transition-transform duration-200 group-hover/workspace:scale-105">
+            <Heart size={16} className="fill-[#5B5EF4] text-[#5B5EF4]" />
           </div>
 
           {/* Expanded view */}
@@ -124,14 +124,14 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
               className="flex-1 flex items-center justify-between min-w-0"
             >
               <div className="flex-1 min-w-0">
-                <div className="text-[#111827] text-[13px] font-semibold truncate leading-normal">
+                <div className="text-[#0F1117] text-[13px] font-bold truncate leading-none">
                   The Date Crew
                 </div>
-                <div className="text-[10px] text-[#6B7280] font-medium leading-none">
+                <div className="text-[10px] text-[#9B9EA8] font-bold tracking-wider uppercase leading-none mt-1">
                   Matchmaker Pro
                 </div>
               </div>
-              <ChevronDown size={14} className="text-[#6B7280] group-hover/workspace:text-[#111827] transition-colors" />
+              <ChevronDown size={14} className="text-[#9B9EA8] group-hover/workspace:text-[#0F1117] transition-colors" />
             </motion.div>
           )}
         </div>
@@ -161,7 +161,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto py-4 px-1 space-y-1.5">
-        {NAV_ITEMS.map(({ to, icon: Icon, label, badge }) => (
+        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
           <NavLink
             key={to}
             to={to}
@@ -175,9 +175,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
             {/* Icon Wrapper */}
             <div className="relative flex items-center justify-center">
               <Icon size={18} className="sidebar-icon" />
-              {badge && !isExpanded && (
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#4F46E5] border-2 border-white" />
-              )}
             </div>
 
             {/* Label */}
@@ -191,13 +188,6 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
               >
                 {label}
               </motion.span>
-            )}
-
-            {/* Badge counts (Expanded only) */}
-            {badge && isExpanded && (
-              <span className="ml-auto bg-[#EEF2FF] text-[#4F46E5] text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#EEF2FF] transition-all">
-                {badge}
-              </span>
             )}
           </NavLink>
         ))}
@@ -224,13 +214,13 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
         {/* User profile item */}
         <div
           className={clsx(
-            "flex items-center gap-2.5 p-2 rounded-lg transition-all duration-150 border border-transparent",
-            isExpanded ? "bg-[#F5F7FA] border-[#E5E7EB]/30 mx-1.5" : "justify-center mx-1"
+            "flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 border border-transparent",
+            isExpanded ? "bg-[#FAFAF9] border-[#E8E8E5] mx-1.5 shadow-3xs" : "justify-center mx-1"
           )}
         >
           {/* Avatar */}
           <div
-            className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 bg-[#E0E7FF] text-[#4F46E5] border border-white shadow-sm cursor-pointer hover:scale-105 transition-transform"
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-[10px] font-bold flex-shrink-0 bg-[#0F1117] text-white border border-[#2B2D36] shadow-sm cursor-pointer hover:scale-105 transition-transform"
             onMouseEnter={(e) => handleIconMouseEnter(e, `Sign out (${displayName})`)}
             onMouseLeave={handleIconMouseLeave}
             onClick={handleSignOut}
@@ -247,19 +237,19 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
               className="flex-1 min-w-0 flex items-center justify-between"
             >
               <div className="flex-1 min-w-0">
-                <div className="text-[#111827] text-[12px] font-bold truncate capitalize leading-tight">
+                <div className="text-[#0F1117] text-[12px] font-bold truncate capitalize leading-tight">
                   {displayName}
                 </div>
-                <div className="text-[10px] text-[#6B7280] font-medium leading-none mt-0.5">
+                <div className="text-[10px] text-[#9B9EA8] font-bold tracking-wider uppercase leading-none mt-0.5">
                   Matchmaker
                 </div>
               </div>
               <button
                 onClick={handleSignOut}
-                className="p-1 rounded text-[#6B7280] hover:text-[#EF4444] transition-colors flex-shrink-0"
+                className="p-1.5 rounded-lg bg-white border border-[#E8E8E5] shadow-3xs text-[#6B6F7A] hover:text-[#E5484D] hover:border-[#E5484D] transition-colors flex-shrink-0"
                 title="Sign out"
               >
-                <LogOut size={14} />
+                <LogOut size={13} />
               </button>
             </motion.div>
           )}

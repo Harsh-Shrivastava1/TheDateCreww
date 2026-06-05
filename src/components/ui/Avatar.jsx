@@ -1,13 +1,25 @@
 import clsx from 'clsx';
 
-export default function Avatar({ name = '', photo, size = 'md', gender }) {
+// Curated gradient pairs — warm, distinctive, human
+const GRADIENT_PAIRS = [
+  ['#EEF0FF', '#5B5EF4'],   // indigo
+  ['#FFF0F5', '#E8445A'],   // rose
+  ['#ECFDF5', '#059669'],   // emerald
+  ['#FFFBEB', '#D97706'],   // amber
+  ['#F5F3FF', '#7C3AED'],   // violet
+  ['#EFF6FF', '#2563EB'],   // blue
+  ['#FDF4FF', '#A855F7'],   // fuchsia
+  ['#ECFEFF', '#0E7490'],   // cyan
+];
+
+export default function Avatar({ name = '', photo, size = 'md', className }) {
   const SIZES = {
-    xs:  { wrapper: 'w-6 h-6',   text: 'text-[9px]',  border: '1.5px' },
-    sm:  { wrapper: 'w-8 h-8',   text: 'text-xs',     border: '1.5px' },
-    md:  { wrapper: 'w-10 h-10', text: 'text-sm',     border: '2px'   },
-    lg:  { wrapper: 'w-14 h-14', text: 'text-base',   border: '2px'   },
-    xl:  { wrapper: 'w-20 h-20', text: 'text-xl',     border: '2px'   },
-    '2xl': { wrapper: 'w-24 h-24', text: 'text-2xl', border: '3px'   },
+    xs:    { wrapper: 'w-6 h-6',   text: 'text-[9px]',   border: '1.5px', radius: '7px'  },
+    sm:    { wrapper: 'w-8 h-8',   text: 'text-[10px]',  border: '1.5px', radius: '8px'  },
+    md:    { wrapper: 'w-10 h-10', text: 'text-[12px]',  border: '1.5px', radius: '10px' },
+    lg:    { wrapper: 'w-14 h-14', text: 'text-[16px]',  border: '2px',   radius: '12px' },
+    xl:    { wrapper: 'w-20 h-20', text: 'text-[22px]',  border: '2px',   radius: '16px' },
+    '2xl': { wrapper: 'w-24 h-24', text: 'text-[26px]',  border: '2.5px', radius: '18px' },
   };
 
   const s = SIZES[size] || SIZES.md;
@@ -19,30 +31,24 @@ export default function Avatar({ name = '', photo, size = 'md', gender }) {
     .join('')
     .toUpperCase();
 
-  // Deterministic color from name
-  const COLORS = [
-    ['#EFF6FF','#2563EB'],
-    ['#F0FDF4','#16A34A'],
-    ['#FEF3C7','#D97706'],
-    ['#FDF2F8','#9D174D'],
-    ['#F5F3FF','#7C3AED'],
-    ['#ECFEFF','#0E7490'],
-    ['#FFF7ED','#C2410C'],
-  ];
-  const idx = (name.charCodeAt(0) || 0) % COLORS.length;
-  const [bg, fg] = COLORS[idx];
+  // Deterministic color index from name
+  const charSum = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const idx = charSum % GRADIENT_PAIRS.length;
+  const [bg, fg] = GRADIENT_PAIRS[idx];
 
   if (photo) {
     return (
       <div
-        className={clsx(s.wrapper, 'rounded-xl overflow-hidden flex-shrink-0')}
-        style={{ border: `${s.border} solid #E5E7EB` }}
+        className={clsx(s.wrapper, 'overflow-hidden flex-shrink-0 ring-2 ring-white', className)}
+        style={{ borderRadius: s.radius, border: `${s.border} solid rgba(0,0,0,0.06)` }}
       >
         <img
           src={photo}
           alt={name}
           className="w-full h-full object-cover"
-          onError={e => { e.target.style.display = 'none'; e.target.parentNode.setAttribute('data-fallback','1'); }}
+          onError={e => {
+            e.target.style.display = 'none';
+          }}
         />
       </div>
     );
@@ -52,9 +58,16 @@ export default function Avatar({ name = '', photo, size = 'md', gender }) {
     <div
       className={clsx(
         s.wrapper, s.text,
-        'rounded-xl flex items-center justify-center flex-shrink-0 font-semibold select-none'
+        'flex items-center justify-center flex-shrink-0 font-bold select-none',
+        className
       )}
-      style={{ background: bg, color: fg, border: `${s.border} solid #E5E7EB` }}
+      style={{
+        borderRadius: s.radius,
+        background: bg,
+        color: fg,
+        border: `${s.border} solid ${bg === '#EEF0FF' ? '#C7D2FE' : 'rgba(0,0,0,0.06)'}`,
+        letterSpacing: '-0.02em',
+      }}
     >
       {initials || '?'}
     </div>
