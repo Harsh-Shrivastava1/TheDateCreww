@@ -347,24 +347,24 @@ export default function Matches() {
 
       <div className="px-8 py-6">
         {/* ── Stats Bar ── */}
-        <div className="flex gap-6 mb-6 border-b border-gray-200 pb-4 overflow-x-auto">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           {[
-            { label: 'Total',    count: stats.total,     color: 'text-gray-900' },
-            { label: 'Suggested', count: stats.suggested, color: 'text-amber-600' },
-            { label: 'Sent',      count: stats.sent,      color: 'text-indigo-600' },
-            { label: 'Interested',count: stats.interested,color: 'text-pink-600' },
-            { label: 'Meeting',   count: stats.meeting,   color: 'text-emerald-600' },
+            { label: 'Total',    count: stats.total,     color: 'text-gray-900', bg: 'bg-white', border: 'border-gray-200' },
+            { label: 'Suggested', count: stats.suggested, color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-100' },
+            { label: 'Sent',      count: stats.sent,      color: 'text-indigo-700', bg: 'bg-indigo-50', border: 'border-indigo-100' },
+            { label: 'Interested',count: stats.interested,color: 'text-pink-700', bg: 'bg-pink-50', border: 'border-pink-100' },
+            { label: 'Meeting',   count: stats.meeting,   color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-100' },
           ].map(s => (
-            <div key={s.label} className="flex-shrink-0">
-              <p className={`text-lg font-bold leading-none ${s.color}`}>{loading ? '—' : s.count}</p>
-              <p className="text-[11px] text-gray-400 font-medium mt-0.5">{s.label}</p>
+            <div key={s.label} className={`p-4 rounded-xl border ${s.bg} ${s.border} flex flex-col gap-1 items-start shadow-sm transition-all hover:shadow-md`}>
+              <p className={`text-2xl font-black tracking-tight leading-none ${s.color}`}>{loading ? '—' : s.count}</p>
+              <p className={`text-[10.5px] font-bold uppercase tracking-wider ${s.color} opacity-80 mt-1`}>{s.label}</p>
             </div>
           ))}
         </div>
 
         {/* ── Toolbar ── */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-          <div className="flex gap-0.5 overflow-x-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 p-2 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <div className="flex gap-1 overflow-x-auto px-1">
             {['All', 'Suggested', 'Sent', 'Interested', 'Meeting Scheduled', 'Closed'].map(tab => (
               <button
                 key={tab}
@@ -373,22 +373,22 @@ export default function Matches() {
                   const list = tab === 'All' ? matches : matches.filter(m => m.status === tab);
                   setSelectedMatch(list[0] ?? null);
                 }}
-                className={`px-3.5 py-1.5 text-[12px] font-semibold rounded-md whitespace-nowrap transition-all ${
+                className={`px-4 py-2 text-[12px] font-bold rounded-lg whitespace-nowrap transition-all ${
                   activeTab === tab
-                    ? 'bg-gray-900 text-white'
-                    : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                    ? 'bg-gray-900 text-white shadow-sm'
+                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
                 {tab}
               </button>
             ))}
           </div>
-          <div className="relative w-full sm:w-64">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <div className="relative w-full sm:w-72 sm:mr-1">
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by name..."
-              className="input input-sm pl-8.5 w-full"
+              placeholder="Search matches by name..."
+              className="w-full pl-9 pr-4 py-2 text-[13px] bg-gray-50 border border-gray-200 focus:border-indigo-500 focus:bg-white rounded-lg outline-none transition-all shadow-3xs"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />

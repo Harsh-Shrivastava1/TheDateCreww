@@ -108,10 +108,10 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
     >
       {/* Workspace Switcher */}
       <div className="px-2 pt-3 pb-2 border-b border-[#E8E8E5] flex-shrink-0">
-        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg hover:bg-[#F5F5F3] active:bg-[#EEF0FF] transition-all duration-150 cursor-pointer border border-transparent hover:border-[#E8E8E5] group/workspace">
+        <div className="flex items-center gap-3 px-2.5 py-2.5 rounded-xl hover:bg-[#F5F5F3] active:bg-[#E8E8E5] transition-all duration-150 cursor-pointer border border-transparent hover:border-[#E8E8E5] group/workspace">
           {/* Logo icon */}
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#EEF0FF] to-[#E0E7FF] text-[#5B5EF4] flex items-center justify-center font-bold flex-shrink-0 shadow-3xs border border-[#C7D2FE] transition-transform duration-200 group-hover/workspace:scale-105">
-            <Heart size={16} className="fill-[#5B5EF4] text-[#5B5EF4]" />
+          <div className="w-8 h-8 rounded-lg bg-[#0F1117] text-white flex items-center justify-center font-bold flex-shrink-0 shadow-sm border border-[#2B2D36] transition-transform duration-200 group-hover/workspace:scale-105">
+            <Heart size={15} className="fill-white text-white" />
           </div>
 
           {/* Expanded view */}
@@ -124,14 +124,24 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
               className="flex-1 flex items-center justify-between min-w-0"
             >
               <div className="flex-1 min-w-0">
-                <div className="text-[#0F1117] text-[13px] font-bold truncate leading-none">
+                <div className="text-[#0F1117] text-[14px] font-black truncate leading-tight tracking-tight">
                   The Date Crew
                 </div>
-                <div className="text-[10px] text-[#9B9EA8] font-bold tracking-wider uppercase leading-none mt-1">
-                  Matchmaker Pro
+                <div className="text-[9.5px] text-[#6B6F7A] font-bold tracking-wider uppercase leading-none mt-0.5">
+                  CRM Matchmaker
                 </div>
               </div>
-              <ChevronDown size={14} className="text-[#9B9EA8] group-hover/workspace:text-[#0F1117] transition-colors" />
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onToggle();
+                }}
+                className="p-1 rounded-md text-[#9B9EA8] hover:text-[#0F1117] hover:bg-gray-200 transition-all flex-shrink-0"
+                title={collapsed ? "Lock sidebar open" : "Collapse sidebar"}
+              >
+                {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+              </button>
             </motion.div>
           )}
         </div>
@@ -194,7 +204,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
       </nav>
 
       {/* User & Settings Section */}
-      <div className="p-2 border-t border-[#E5E7EB] flex-shrink-0 space-y-1">
+      <div className="p-3 border-t border-[#E5E7EB] flex-shrink-0 space-y-1.5">
         {/* Settings link */}
         <NavLink
           to="/settings"
@@ -214,8 +224,8 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
         {/* User profile item */}
         <div
           className={clsx(
-            "flex items-center gap-2.5 p-2 rounded-xl transition-all duration-150 border border-transparent",
-            isExpanded ? "bg-[#FAFAF9] border-[#E8E8E5] mx-1.5 shadow-3xs" : "justify-center mx-1"
+            "flex items-center gap-3 p-2.5 rounded-xl transition-all duration-150 border border-transparent",
+            isExpanded ? "bg-[#FAFAF9] border-[#E8E8E5] shadow-3xs" : "justify-center"
           )}
         >
           {/* Avatar */}

@@ -28,7 +28,6 @@ export default function Notes() {
   // Filtering states
   const [search, setSearch] = useState('');
   const [selectedCustomerId, setSelectedCustomerId] = useState('All');
-  const [filterPinned, setFilterPinned] = useState(false);
   
   // Create Form states
   const [newNote, setNewNote] = useState('');
@@ -164,9 +163,7 @@ export default function Notes() {
       list = list.filter(n => n.customerId === selectedCustomerId);
     }
 
-    if (filterPinned) {
-      list = list.filter(n => n.pinned);
-    }
+
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -186,7 +183,7 @@ export default function Notes() {
       const tb = b.createdAt?.toMillis?.() ?? 0;
       return tb - ta;
     });
-  }, [notes, customers, selectedCustomerId, filterPinned, search]);
+  }, [notes, customers, selectedCustomerId, search]);
 
   const formatTs = (ts) => {
     if (!ts) return 'just now';
@@ -209,45 +206,45 @@ export default function Notes() {
       />
 
       <div className="px-8 py-6">
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {/* ── Left Sidebar: Client selectors ── */}
-          <div className="w-full lg:w-60 flex-shrink-0 space-y-4">
-            <div className="card p-4 bg-white">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Folders</h3>
+          {/* ── Left Sidebar: Folders ── */}
+          <div className="w-full lg:w-64 flex-shrink-0">
+            <div className="sticky top-6">
+              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 px-2">Folders</h3>
               
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <button
                   onClick={() => setSelectedCustomerId('All')}
-                  className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-between ${
+                  className={`w-full text-left px-3 py-2 rounded-xl text-[13px] font-bold transition-all flex items-center justify-between ${
                     selectedCustomerId === 'All'
-                      ? 'bg-gray-900 text-white shadow-xs'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-gray-900 text-white shadow-sm'
+                      : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm'
                   }`}
                 >
                   <span>All Candidates</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-md ${selectedCustomerId === 'All' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                  <span className={`text-[10px] px-2 py-0.5 rounded-full ${selectedCustomerId === 'All' ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-500'}`}>
                     {notes.length}
                   </span>
                 </button>
 
-                <div className="pt-2 mt-2 border-t border-gray-100 space-y-1 overflow-y-auto max-h-[300px] scrollbar-none">
+                <div className="pt-2 mt-2 border-t border-gray-200 space-y-0.5 overflow-y-auto max-h-[600px] scrollbar-none">
                   {customers.map(c => {
                     const count = notes.filter(n => n.customerId === c.id).length;
-                    if (count === 0) return null; // Only show customers who have notes
+                    if (count === 0) return null;
 
                     return (
                       <button
                         key={c.id}
                         onClick={() => setSelectedCustomerId(c.id)}
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-between truncate ${
+                        className={`w-full text-left px-3 py-2 rounded-xl text-[13px] font-semibold transition-all flex items-center justify-between truncate ${
                           selectedCustomerId === c.id
-                            ? 'bg-gray-900 text-white shadow-xs'
-                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                            ? 'bg-gray-900 text-white shadow-sm'
+                            : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-sm'
                         }`}
                       >
                         <span className="truncate pr-2">{c.firstName} {c.lastName}</span>
-                        <span className={`text-[9px] px-1.5 py-0.5 rounded ${selectedCustomerId === c.id ? 'bg-white/20 text-white' : 'bg-gray-150 text-gray-500'}`}>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full ${selectedCustomerId === c.id ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-500'}`}>
                           {count}
                         </span>
                       </button>
@@ -256,25 +253,14 @@ export default function Notes() {
                 </div>
               </div>
             </div>
-            
-            {/* Active Pinned Toggles */}
-            <div className="card p-4 bg-white flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-700">Filter Pinned Notes</span>
-              <button
-                onClick={() => setFilterPinned(p => !p)}
-                className={`w-8 h-4 rounded-full transition-all relative p-0.5 ${filterPinned ? 'bg-gray-950' : 'bg-gray-200'}`}
-              >
-                <div className={`w-3 h-3 rounded-full bg-white transition-all ${filterPinned ? 'translate-x-4' : 'translate-x-0'}`} />
-              </button>
-            </div>
           </div>
 
           {/* ── Main Pane ── */}
-          <div className="flex-1 min-w-0 space-y-5">
+          <div className="flex-1 min-w-0 space-y-6">
             
             {/* Create CRM Note */}
-            <div className="card p-5 bg-white shadow-xs border border-gray-200">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Add Customer Note</h3>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 transition-shadow hover:shadow-md">
+              <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-4">Add Customer Note</h3>
               
               <form onSubmit={handleSubmit} className="space-y-3">
                 {/* Linked Customer selector */}
@@ -295,42 +281,42 @@ export default function Notes() {
                 </div>
 
                 {/* Editor Textarea */}
-                <div className="border border-gray-200 rounded-lg overflow-hidden focus-within:border-gray-400 focus-within:ring-1 focus-within:ring-gray-400">
+                <div className="border border-gray-200 rounded-xl overflow-hidden focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500 transition-all shadow-3xs">
                   {/* formatting toolbar */}
-                  <div className="bg-gray-50 border-b border-gray-200 px-3 py-1.5 flex items-center gap-1.5">
+                  <div className="bg-gray-50/80 border-b border-gray-200 px-3 py-2 flex items-center gap-1.5">
                     <button 
                       type="button" 
                       onClick={() => insertText('**', '**')}
-                      className="p-1 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-white hover:shadow-3xs text-gray-500 hover:text-gray-900 transition-all border border-transparent hover:border-gray-200"
                       title="Bold text"
                     >
-                      <BoldIcon size={12} strokeWidth={3} />
+                      <BoldIcon size={13} strokeWidth={2.5} />
                     </button>
                     <button 
                       type="button" 
                       onClick={() => insertText('*', '*')}
-                      className="p-1 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-white hover:shadow-3xs text-gray-500 hover:text-gray-900 transition-all border border-transparent hover:border-gray-200"
                       title="Italic text"
                     >
-                      <ItalicIcon size={12} strokeWidth={3} />
+                      <ItalicIcon size={13} strokeWidth={2.5} />
                     </button>
                     <button 
                       type="button" 
                       onClick={() => insertText('### ')}
-                      className="p-1 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-white hover:shadow-3xs text-gray-500 hover:text-gray-900 transition-all border border-transparent hover:border-gray-200"
                       title="Heading"
                     >
-                      <HeadingIcon size={12} strokeWidth={3} />
+                      <HeadingIcon size={13} strokeWidth={2.5} />
                     </button>
                     <button 
                       type="button" 
                       onClick={() => insertText('- ')}
-                      className="p-1 rounded hover:bg-gray-200 text-gray-500 hover:text-gray-800 transition-colors"
+                      className="p-1.5 rounded-md hover:bg-white hover:shadow-3xs text-gray-500 hover:text-gray-900 transition-all border border-transparent hover:border-gray-200"
                       title="Bullet list"
                     >
-                      <ListIcon size={12} strokeWidth={3} />
+                      <ListIcon size={13} strokeWidth={2.5} />
                     </button>
-                    <span className="text-[10px] text-gray-300 ml-auto font-semibold">Rich Formatting Markdown</span>
+                    <span className="text-[10px] text-gray-400 ml-auto font-bold uppercase tracking-wider">Rich Formatting</span>
                   </div>
                   
                   <textarea
@@ -338,16 +324,17 @@ export default function Notes() {
                     rows={3}
                     required
                     placeholder="Write matching logs, family preferences, background details..."
-                    className="w-full border-none outline-none focus:ring-0 p-3 text-xs leading-relaxed text-gray-700 resize-none h-24"
+                    className="w-full border-none outline-none focus:ring-0 p-4 text-[13px] leading-relaxed text-gray-700 resize-none h-28"
                     value={newNote}
                     onChange={e => setNewNote(e.target.value)}
                   />
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-1">
                   <button
                     type="submit"
-                    className="btn btn-primary btn-sm px-4 gap-1 shadow-xs"
+                    className="btn btn-primary px-5 gap-1 shadow-sm font-bold"
+                    style={{ color: '#fff' }}
                     disabled={isSubmitting || !newNote.trim() || !targetCustomerId}
                   >
                     {isSubmitting ? 'Saving...' : 'Add Note'}
@@ -357,17 +344,17 @@ export default function Notes() {
             </div>
 
             {/* Notes List Header / Search */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200 pb-2">
-              <h3 className="text-sm font-bold text-gray-900 tracking-tight">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-8 mb-2">
+              <h3 className="text-[15px] font-black text-gray-900 tracking-tight">
                 {selectedCustomerId === 'All' ? 'All Workspace Notes' : 'Linked Notes Folder'}
               </h3>
               
-              <div className="relative w-full sm:w-64">
-                <SearchIcon size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <div className="relative w-full sm:w-72">
+                <SearchIcon size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search inside notes..."
-                  className="input input-sm pl-8.5"
+                  className="w-full pl-9 pr-4 py-2 text-[13px] bg-white border border-gray-200 focus:border-indigo-500 rounded-lg outline-none transition-all shadow-sm"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                 />
@@ -378,7 +365,7 @@ export default function Notes() {
             {loading && filteredNotes.length === 0 ? (
               <div className="space-y-4">
                 {[1, 2].map(i => (
-                  <div key={i} className="card p-5 space-y-3">
+                  <div key={i} className="bg-white rounded-2xl p-6 space-y-3 border border-gray-200 shadow-sm">
                     <Skeleton className="h-4 w-1/4 rounded" />
                     <Skeleton className="h-10 w-full rounded" />
                   </div>
@@ -391,7 +378,7 @@ export default function Notes() {
                 description="Use the input above to link and submit a new candidate note."
               />
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <AnimatePresence mode="popLayout">
                   {filteredNotes.map((note) => {
                     const custName = note.customer
@@ -406,8 +393,8 @@ export default function Notes() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.15 }}
-                        className={`card p-5 bg-white hover:shadow-xs transition-shadow relative border ${
-                          note.pinned ? 'border-indigo-150' : 'border-gray-200'
+                        className={`bg-white rounded-2xl p-6 hover:shadow-md transition-shadow relative border ${
+                          note.pinned ? 'border-indigo-500 shadow-sm' : 'border-gray-200 shadow-sm'
                         }`}
                       >
                         {/* Pinned label indicator bar */}

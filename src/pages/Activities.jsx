@@ -137,19 +137,18 @@ export default function Activities() {
         }
       />
 
-      <div className="px-8 py-6 max-w-4xl space-y-6">
-        
+      <div className="px-8 py-6 w-full space-y-6">
         {/* Navigation & Search toolbar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-200 pb-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 p-2 bg-white border border-gray-200 rounded-xl shadow-sm">
           {/* Tab buttons */}
-          <div className="flex gap-1 overflow-x-auto">
+          <div className="flex gap-1 overflow-x-auto px-1">
             {CATEGORIES.map(tab => (
               <button
                 key={tab}
                 onClick={() => { setActiveTab(tab); setLimitCount(15); }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                className={`px-4 py-2 text-[12px] font-bold rounded-lg whitespace-nowrap transition-all ${
                   activeTab === tab
-                    ? 'bg-gray-900 text-white shadow-xs'
+                    ? 'bg-gray-900 text-white shadow-sm'
                     : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                 }`}
               >
@@ -159,12 +158,12 @@ export default function Activities() {
           </div>
 
           {/* Search bar */}
-          <div className="relative w-full sm:w-72">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <div className="relative w-full sm:w-72 sm:mr-1">
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
             <input
               type="text"
               placeholder="Search actions, clients, authors..."
-              className="input input-sm pl-9"
+              className="w-full pl-9 pr-4 py-2 text-[13px] bg-gray-50 border border-gray-200 focus:border-indigo-500 focus:bg-white rounded-lg outline-none transition-all shadow-3xs"
               value={search}
               onChange={e => { setSearch(e.target.value); setLimitCount(15); }}
             />
@@ -211,14 +210,14 @@ export default function Activities() {
                     >
                       {/* Timeline dot/icon */}
                       <div
-                        className="absolute -left-[37px] top-3.5 w-6 h-6 rounded-md flex items-center justify-center border border-gray-200 bg-white shadow-xs"
+                        className="absolute -left-[38px] top-4 w-7 h-7 rounded-xl flex items-center justify-center border border-gray-200 bg-white shadow-sm"
                         style={{ color: act.config.color }}
                       >
-                        <act.config.Icon size={11} strokeWidth={2.5} />
+                        <act.config.Icon size={12} strokeWidth={2.5} />
                       </div>
 
                       {/* Timeline Card */}
-                      <div className="card p-4 hover:shadow-xs transition-shadow bg-white flex items-center justify-between gap-4">
+                      <div className="bg-white rounded-xl p-5 hover:shadow-md transition-all shadow-sm border border-gray-200 flex items-center justify-between gap-4">
                         <div className="flex items-start gap-3 min-w-0">
                           {act.customer && (
                             <div 

@@ -14,24 +14,7 @@ import Avatar from '../components/ui/Avatar';
 import { Skeleton } from '../components/ui/Skeleton';
 import PageHeader from '../components/layout/PageHeader';
 
-/* ─── Sparkline ─────────────────────────────────── */
-function Sparkline({ color, path }) {
-  return (
-    <svg className="w-20 h-10" viewBox="0 0 100 40" fill="none">
-      <defs>
-        <linearGradient id={`g-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.25" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path
-        d={path + ' L95,40 L5,40 Z'}
-        fill={`url(#g-${color.replace('#', '')})`}
-      />
-      <path d={path} stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+
 
 
 
@@ -169,10 +152,10 @@ export default function Dashboard() {
 
   /* kpis */
   const kpis = [
-    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, color: '#5B5EF4', bg: 'linear-gradient(135deg,#EEF0FF 0%,#E0E7FF 100%)', iconBg: '#5B5EF4', delta: '+12%', path: 'M5,28 Q20,15 40,22 T75,8 T95,18' },
-    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, color: '#0EA472', bg: 'linear-gradient(135deg,#ECFDF5 0%,#D1FAE5 100%)', iconBg: '#0EA472', delta: '+18%', path: 'M5,28 Q20,22 40,12 T75,28 T95,8' },
-    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, color: '#E8445A', bg: 'linear-gradient(135deg,#FFF0F2 0%,#FFE4E8 100%)', iconBg: '#E8445A', delta: '+8%', path: 'M5,18 Q20,8 40,28 T75,12 T95,22' },
-    { label: 'Meetings Scheduled', value: stats?.meetingsScheduled ?? 0, icon: Calendar, color: '#3B82F6', bg: 'linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%)', iconBg: '#3B82F6', delta: '+22%', path: 'M5,28 Q20,12 40,28 T75,8 T95,18' },
+    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-50', delta: '+12%' },
+    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-50', delta: '+18%' },
+    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, iconColor: 'text-rose-600', iconBg: 'bg-rose-50', delta: '+8%' },
+    { label: 'Meetings Scheduled', value: stats?.meetingsScheduled ?? 0, icon: Calendar, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', delta: '+22%' },
   ];
 
   // Helper variables for layout conditions
@@ -209,32 +192,23 @@ export default function Dashboard() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.06, ease: 'easeOut' }}
-                className="rounded-[18px] p-6 flex flex-col gap-4 cursor-default transition-all duration-300 relative overflow-hidden group"
-                style={{ background: kpi.bg, border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 12px rgba(15,17,23,0.03)' }}
+                className="bg-white border border-gray-200/75 rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow group"
               >
-                {/* Subtle gradient overlay effect on hover */}
-                <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                
-                <div className="flex items-start justify-between relative z-10">
-                  <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center shadow-3xs"
-                    style={{ background: kpi.iconBg }}
-                  >
-                    <kpi.icon size={18} color="white" strokeWidth={2.5} />
+                <div className="flex items-center gap-3">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${kpi.iconBg}`}>
+                    <kpi.icon size={16} className={kpi.iconColor} strokeWidth={2.5} />
                   </div>
-                  <Sparkline color={kpi.color} path={kpi.path} />
+                  <p className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider">{kpi.label}</p>
                 </div>
-                <div className="relative z-10">
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-[34px] font-black text-[#0F1117] tracking-tight leading-none">
-                      {loading ? <span className="text-xl text-gray-400">—</span> : kpi.value}
-                    </span>
-                    <span className="inline-flex items-center gap-0.5 text-[11.5px] font-bold text-emerald-600">
-                      <TrendingUp size={11} strokeWidth={3} />
-                      {kpi.delta}
-                    </span>
-                  </div>
-                  <p className="text-[11.5px] font-bold text-[#5C5F6A] uppercase tracking-wider mt-1.5">{kpi.label}</p>
+                
+                <div className="mt-4 flex items-end justify-between">
+                  <span className="text-[32px] font-black text-gray-900 tracking-tight leading-none">
+                    {loading ? <span className="text-xl text-gray-400">—</span> : kpi.value}
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-[10.5px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100/50 mb-0.5">
+                    <TrendingUp size={11} strokeWidth={3} />
+                    {kpi.delta}
+                  </span>
                 </div>
               </motion.div>
             ))}
@@ -282,7 +256,7 @@ export default function Dashboard() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.04 }}
                         onClick={() => navigate(`/customers/${item.customer.id}`)}
-                        className={`flex items-center justify-between px-5 py-3.5 hover:bg-[#F5F5F3] cursor-pointer transition-colors group border-l-4 ${QUEUE_BORDER[item.severity]} border-t border-t-transparent`}
+                        className={`flex items-center justify-between px-5 py-3.5 hover:bg-[#F5F5F3] cursor-pointer transition-colors group border-t border-t-transparent`}
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
                           <Avatar name={item.title} photo={item.customer.photo} size="sm" />
@@ -410,14 +384,19 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
-                  <div className="p-3.5 rounded-xl bg-indigo-600 flex items-center justify-between">
+                  <div className="p-4 rounded-xl bg-[#FAFAF9] border border-[#E8E8E5] flex items-center justify-between">
                     <div>
-                      <p className="text-[10px] font-bold text-indigo-200 uppercase tracking-wider">High Compat</p>
-                      <p className="text-[11px] text-white/80 mt-0.5">Score ≥ 85%</p>
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <Sparkles size={13} className="text-[#5B5EF4]" />
+                        <p className="text-[10px] font-bold text-[#9B9EA8] uppercase tracking-wider">High Compatibility</p>
+                      </div>
+                      <p className="text-[11.5px] text-[#5C5F6A] font-medium leading-none">Score ≥ 85%</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[28px] font-black text-white leading-none">{loading ? '—' : aiStats.highPotential}</p>
-                      <p className="text-[10px] text-indigo-300 mt-0.5">opportunities</p>
+                      <p className="text-[28px] font-black text-[#5B5EF4] leading-none tracking-tight">
+                        {loading ? '—' : aiStats.highPotential}
+                      </p>
+                      <p className="text-[9.5px] font-bold text-[#9B9EA8] mt-1 uppercase tracking-widest">Opportunities</p>
                     </div>
                   </div>
                 </div>
