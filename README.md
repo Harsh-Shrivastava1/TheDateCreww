@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 Features at a Glance
+##  Features at a Glance
 
 ### 1. Matchmaker Dashboard
 - **Real-Time KPIs**: Track total customers, verified profiles, matches sent, and meetings scheduled with visual sparklines and delta indicators.
@@ -22,7 +22,7 @@
 
 ---
 
-## 🧠 Advanced Matchmaking Algorithms
+##  Advanced Matchmaking Algorithms
 
 The platform features a proprietary **Gender-Specific Weighted Scoring Engine**. Rather than using a generic similarity score, the engine acknowledges that men and women often have differing societal and personal priorities when seeking a partner, applying distinct evaluation rubrics.
 
@@ -53,7 +53,7 @@ The engine returns a compatibility score from `0` to `100`, broken down exactly 
 
 ---
 
-## 🤖 How AI is Used Properly
+##  How AI is Used Properly
 
 The Date Crew leverages Large Language Models (LLMs) via serverless endpoints (e.g., Groq API) to augment the matchmaker, not replace them. 
 
@@ -67,7 +67,7 @@ The Date Crew leverages Large Language Models (LLMs) via serverless endpoints (e
 
 ---
 
-## 🎨 Premium UI/UX & Design System
+##  Premium UI/UX & Design System
 
 The Date Crew features a bespoke design system inspired by top-tier SaaS platforms (like Linear, Attio, and Notion).
 
@@ -78,7 +78,7 @@ The Date Crew features a bespoke design system inspired by top-tier SaaS platfor
 
 ---
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Frontend**: React (Vite), Tailwind CSS, Framer Motion (micro-animations), Lucide React (iconography).
 - **Backend / Database**: Firebase Firestore (real-time NoSQL database), Firebase Auth.
@@ -87,7 +87,7 @@ The Date Crew features a bespoke design system inspired by top-tier SaaS platfor
 
 ---
 
-## 💻 Getting Started
+##  Getting Started
 
 1. **Install dependencies**:
    ```bash
