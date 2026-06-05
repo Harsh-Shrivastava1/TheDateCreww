@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Users, Heart, Calendar, ShieldCheck,
   ArrowRight, Clock, Sparkles, ChevronRight,
-  Activity, AlertCircle, TrendingUp, Zap,
+  Activity, AlertCircle, Zap,
   MapPin, Briefcase, ArrowUpRight,
 } from 'lucide-react';
 import { doc, onSnapshot } from 'firebase/firestore';
@@ -152,10 +152,10 @@ export default function Dashboard() {
 
   /* kpis */
   const kpis = [
-    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-50', delta: '+12%' },
-    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-50', delta: '+18%' },
-    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, iconColor: 'text-rose-600', iconBg: 'bg-rose-50', delta: '+8%' },
-    { label: 'Meetings Scheduled', value: stats?.meetingsScheduled ?? 0, icon: Calendar, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', delta: '+22%' },
+    { label: 'Total Customers', value: stats?.totalCustomers ?? 0, icon: Users, iconColor: 'text-indigo-600', iconBg: 'bg-indigo-50' },
+    { label: 'Verified Profiles', value: stats?.verifiedProfiles ?? 0, icon: ShieldCheck, iconColor: 'text-emerald-600', iconBg: 'bg-emerald-50' },
+    { label: 'Matches Sent', value: stats?.matchesSent ?? 0, icon: Heart, iconColor: 'text-rose-600', iconBg: 'bg-rose-50' },
+    { label: 'Meetings Scheduled', value: stats?.meetingsScheduled ?? 0, icon: Calendar, iconColor: 'text-blue-600', iconBg: 'bg-blue-50' },
   ];
 
   // Helper variables for layout conditions
@@ -201,13 +201,9 @@ export default function Dashboard() {
                   <p className="text-[11.5px] font-bold text-gray-500 uppercase tracking-wider">{kpi.label}</p>
                 </div>
                 
-                <div className="mt-4 flex items-end justify-between">
+                <div className="mt-4">
                   <span className="text-[32px] font-black text-gray-900 tracking-tight leading-none">
                     {loading ? <span className="text-xl text-gray-400">—</span> : kpi.value}
-                  </span>
-                  <span className="inline-flex items-center gap-1 text-[10.5px] font-extrabold text-emerald-700 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100/50 mb-0.5">
-                    <TrendingUp size={11} strokeWidth={3} />
-                    {kpi.delta}
                   </span>
                 </div>
               </motion.div>
