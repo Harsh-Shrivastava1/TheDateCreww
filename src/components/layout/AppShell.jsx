@@ -15,7 +15,7 @@ export default function AppShell() {
     : 'AD';
 
   return (
-    <div className="flex min-h-screen bg-[#FAFAF8] text-[#111827]">
+    <div className="flex min-h-screen bg-[#FAFAF8] dark:bg-[#0F1117] text-[#111827] dark:text-white">
       {/* Mobile Top Navbar */}
       <div className="md:hidden flex items-center justify-between px-4 bg-white border-b border-[#E5E7EB] fixed top-0 left-0 right-0 h-14 z-30">
         <div className="flex items-center gap-3">

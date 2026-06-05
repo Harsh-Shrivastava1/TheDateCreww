@@ -145,6 +145,7 @@ export default function Settings() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('matching');
+  const activeTabMeta = useMemo(() => TABS.find(t => t.id === activeTab) || TABS[0], [activeTab]);
 
   // ── State ──
   const [matchmaking, setMatchmaking] = useState({
@@ -721,7 +722,7 @@ export default function Settings() {
       {/* ── Main content + Sticky Save Bar container ── */}
       <div className="flex-1 flex flex-col min-h-0 relative">
         <main className="flex-1 overflow-y-auto pb-28">
-          <div className="max-w-2xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+          <div className="max-w-2xl mx-auto px-4 sm:px-8 py-6 sm:py-10 pt-20">
             {panels[activeTab]}
           </div>
         </main>
@@ -730,9 +731,9 @@ export default function Settings() {
         <div className={`sticky bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur border-t border-gray-200 px-6 flex items-center justify-between z-30 transition-all duration-200 ${
           hasChanges ? 'shadow-lg' : 'shadow-none opacity-80'
         }`}>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
             <SlidersHorizontal size={14} className="text-gray-400" />
-            <span>Editing <span className="font-semibold text-gray-700">{activeTabMeta?.label}</span></span>
+            <span>Editing <span className="font-semibold text-gray-700">{(TABS.find(t => t.id === activeTab) || TABS[0]).label}</span></span>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={handleReset} disabled={!hasChanges || saving}

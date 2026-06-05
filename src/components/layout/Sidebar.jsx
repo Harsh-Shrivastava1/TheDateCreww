@@ -45,7 +45,13 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
     : 'Admin';
 
   const handleSignOut = async () => {
-    await signOut();
+    // Close mobile drawer if open
+    try { setMobileOpen?.(false); } catch (e) { /* ignore */ }
+    try {
+      await signOut();
+    } catch (e) {
+      console.error(e);
+    }
     navigate('/login');
   };
 
@@ -210,7 +216,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, setMobileOpen
           to="/settings"
           onClick={() => setMobileOpen(false)}
           className={({ isActive }) =>
-            clsx('sidebar-nav-item', isActive && 'active')
+            clsx('sidebar-nav-item', !isExpanded && 'justify-center mx-0', isActive && 'active')
           }
           onMouseEnter={(e) => handleIconMouseEnter(e, 'Settings')}
           onMouseLeave={handleIconMouseLeave}

@@ -36,13 +36,14 @@ export default function Login() {
     <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#FAFAF9] font-sans overflow-y-auto lg:overflow-hidden relative">
 
       {/* ── Top Left Brand Name ── */}
-      <div className="absolute top-6 left-8 flex items-center gap-2 z-20 select-none">
-        <span className="text-[15px] sm:text-base font-bold text-gray-900 tracking-tight">TDC Matchmaker</span>
-      </div>
 
       {/* ── Left Column — Marketing & Branding (Hidden on mobile) ── */}
       <div className="hidden lg:flex lg:w-[52%] h-full flex-col justify-center p-8 sm:p-12 lg:px-20 xl:px-24 bg-[#FAFAF9] select-none">
         <div className="max-w-[520px] space-y-5">
+          <div className="text-base font-bold text-gray-800 tracking-tight mb-6 hidden lg:block">
+            TDC Matchmaker
+          </div>
+
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#EEF2FF] text-[#4F46E5] rounded-md text-[13px] font-semibold">
             <Shield size={13} className="fill-[#4F46E5]/10" />
             Internal Access Only
