@@ -141,6 +141,14 @@ function CompatibilityPanel({ breakdown = [], analysis, loading }) {
 export default function Matches() {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('All');
@@ -345,7 +353,7 @@ export default function Matches() {
         }
       />
 
-      <div className="px-8 py-6">
+      <div className="px-4 sm:px-8 py-6">
         {/* ── Stats Bar ── */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
           {[
@@ -424,53 +432,121 @@ export default function Matches() {
           <div className="grid grid-cols-12 bg-white border border-gray-200 rounded-lg overflow-hidden min-h-[600px]">
 
             {/* ── LEFT LIST ── */}
-            <div className="col-span-12 lg:col-span-4 border-r border-gray-200 flex flex-col max-h-[700px] overflow-y-auto divide-y divide-gray-100">
-              {filteredMatches.map(m => {
-                const isSelected = selectedMatch?.id === m.id;
-                const cObj = customersMap[m.customerId];
-                const pObj = customersMap[m.profileId];
-                const cName = m.customerName || (cObj ? `${cObj.firstName} ${cObj.lastName}` : 'Client');
-                const pName = m.profileName || (pObj ? `${pObj.firstName} ${pObj.lastName}` : 'Partner');
-                const scoreDot = m.score >= 75 ? 'bg-emerald-500' : m.score >= 55 ? 'bg-indigo-500' : 'bg-amber-500';
+            {(!isMobile || !mobileDetailOpen) && (
+              <div className="col-span-12 lg:col-span-4 border-r border-gray-200 flex flex-col max-h-[700px] overflow-y-auto divide-y divide-gray-100 p-2 sm:p-0">
+                {isMobile ? (
+                  // Mobile Cards Layout
+                  <div className="grid grid-cols-1 gap-4 p-2">
+                    {filteredMatches.map(m => {
+                      const cObj = customersMap[m.customerId];
+                      const pObj = customersMap[m.profileId];
+                      const cName = m.customerName || (cObj ? `${cObj.firstName} ${cObj.lastName}` : 'Client');
+                      const pName = m.profileName || (pObj ? `${pObj.firstName} ${pObj.lastName}` : 'Partner');
+                      return (
+                        <div key={m.id} className="card p-5 bg-white border border-gray-200 rounded-xl shadow-xs space-y-4">
+                          <div className="flex items-center justify-between gap-3">
+                            {/* Profile A */}
+                            <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0 text-center">
+                              <Avatar name={cName} photo={cObj?.photo} size="md" />
+                              <span className="text-[12.5px] font-bold text-gray-850 truncate w-full">{cName}</span>
+                              <span className="text-[10px] text-gray-400 font-medium">{cObj?.age || '—'} · {cObj?.city || '—'}</span>
+                            </div>
 
-                return (
-                  <div
-                    key={m.id}
-                    onClick={() => setSelectedMatch(m)}
-                    className={`p-3.5 flex items-center gap-3 cursor-pointer transition-colors ${
-                      isSelected ? 'bg-indigo-50/60 border-l-2 border-[#4F46E5]' : 'hover:bg-gray-50 border-l-2 border-transparent'
-                    }`}
-                  >
-                    <div className="flex -space-x-2 flex-shrink-0">
-                      <Avatar name={cName} photo={cObj?.photo} size="sm" />
-                      <Avatar name={pName} photo={pObj?.photo} size="sm" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-semibold text-gray-800 truncate">
-                        {cName} <span className="text-gray-400 font-normal">↔</span> {pName}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`w-1.5 h-1.5 rounded-full ${scoreDot}`} />
-                        <span className="text-[11px] text-gray-500 font-medium">{m.score}% · {m.status}</span>
-                      </div>
-                    </div>
-                    <ChevronRight size={13} className="text-gray-300 flex-shrink-0" />
+                            {/* Score & Arrow */}
+                            <div className="flex flex-col items-center gap-1 shrink-0">
+                              <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                                m.score >= 75 ? 'bg-emerald-50 text-emerald-700' : m.score >= 55 ? 'bg-indigo-50 text-indigo-700' : 'bg-amber-50 text-amber-700'
+                              }`}>
+                                {m.score}%
+                              </span>
+                              <span className="text-[9px] text-gray-405 font-bold uppercase tracking-wider">Match</span>
+                            </div>
+
+                            {/* Profile B */}
+                            <div className="flex flex-col items-center gap-1.5 flex-1 min-w-0 text-center">
+                              <Avatar name={pName} photo={pObj?.photo} size="md" />
+                              <span className="text-[12.5px] font-bold text-gray-850 truncate w-full">{pName}</span>
+                              <span className="text-[10px] text-gray-400 font-medium">{pObj?.age || '—'} · {pObj?.city || '—'}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between border-t border-gray-100 pt-3">
+                            <Badge status={m.status} size="sm" />
+                            <button
+                              onClick={() => {
+                                setSelectedMatch(m);
+                                setMobileDetailOpen(true);
+                              }}
+                              className="btn btn-secondary btn-xs font-bold px-3 py-1.5 shadow-3xs"
+                            >
+                              View Details
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
+                ) : (
+                  // Desktop Rows Layout
+                  filteredMatches.map(m => {
+                    const isSelected = selectedMatch?.id === m.id;
+                    const cObj = customersMap[m.customerId];
+                    const pObj = customersMap[m.profileId];
+                    const cName = m.customerName || (cObj ? `${cObj.firstName} ${cObj.lastName}` : 'Client');
+                    const pName = m.profileName || (pObj ? `${pObj.firstName} ${pObj.lastName}` : 'Partner');
+                    const scoreDot = m.score >= 75 ? 'bg-emerald-500' : m.score >= 55 ? 'bg-indigo-500' : 'bg-amber-500';
+
+                    return (
+                      <div
+                        key={m.id}
+                        onClick={() => setSelectedMatch(m)}
+                        className={`p-3.5 flex items-center gap-3 cursor-pointer transition-colors ${
+                          isSelected ? 'bg-indigo-50/60 border-l-2 border-[#4F46E5]' : 'hover:bg-gray-50 border-l-2 border-transparent'
+                        }`}
+                      >
+                        <div className="flex -space-x-2 flex-shrink-0">
+                          <Avatar name={cName} photo={cObj?.photo} size="sm" />
+                          <Avatar name={pName} photo={pObj?.photo} size="sm" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[13px] font-semibold text-gray-850 truncate">
+                            {cName} <span className="text-gray-400 font-normal">↔</span> {pName}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className={`w-1.5 h-1.5 rounded-full ${scoreDot}`} />
+                            <span className="text-[11px] text-gray-500 font-medium">{m.score}% · {m.status}</span>
+                          </div>
+                        </div>
+                        <ChevronRight size={13} className="text-gray-300 flex-shrink-0" />
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
 
             {/* ── RIGHT DETAIL ── */}
-            <div className="col-span-12 lg:col-span-8 max-h-[700px] overflow-y-auto">
-              {selectedMatch ? (() => {
-                const cObj = customersMap[selectedMatch.customerId];
-                const pObj = customersMap[selectedMatch.profileId];
-                const cName = selectedMatch.customerName || (cObj ? `${cObj.firstName} ${cObj.lastName}` : 'Client');
-                const pName = selectedMatch.profileName || (pObj ? `${pObj.firstName} ${pObj.lastName}` : 'Partner');
-                const nextAction = getNextAction(selectedMatch);
+            {(!isMobile || mobileDetailOpen) && (
+              <div className="col-span-12 lg:col-span-8 max-h-[700px] overflow-y-auto w-full">
+                {isMobile && mobileDetailOpen && (
+                  <div className="p-4 border-b border-gray-150 bg-gray-50 flex items-center">
+                    <button
+                      onClick={() => setMobileDetailOpen(false)}
+                      className="btn btn-secondary btn-sm gap-1.5 font-bold"
+                    >
+                      ← Back to Matches List
+                    </button>
+                  </div>
+                )}
+                {selectedMatch ? (() => {
+                  const cObj = customersMap[selectedMatch.customerId];
+                  const pObj = customersMap[selectedMatch.profileId];
+                  const cName = selectedMatch.customerName || (cObj ? `${cObj.firstName} ${cObj.lastName}` : 'Client');
+                  const pName = selectedMatch.profileName || (pObj ? `${pObj.firstName} ${pObj.lastName}` : 'Partner');
+                  const nextAction = getNextAction(selectedMatch);
 
-                return (
-                  <div className="p-6 space-y-5">
+                  return (
+                    <div className="p-6 space-y-5">
 
                     {/* ── Hero: pair + score ── */}
                     <div className="flex flex-col sm:flex-row items-center gap-6 p-5 bg-white border border-gray-200 rounded-lg">
@@ -705,9 +781,10 @@ export default function Matches() {
               })() : (
                 <div className="flex items-center justify-center h-full p-8">
                   <p className="text-[13px] text-gray-400">Select a match to view details.</p>
-                </div>
-              )}
-            </div>
+                  </div>
+                )}
+              </div>
+            )}
 
           </div>
         )}

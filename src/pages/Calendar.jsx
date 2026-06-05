@@ -24,10 +24,10 @@ const EVENT_TYPES = [
 ];
 
 const STATUS_CONFIG = {
-  'Scheduled': { bg: 'bg-blue-50 border-blue-150', text: 'text-blue-700', dot: 'bg-blue-500' },
-  'Completed': { bg: 'bg-emerald-50 border-emerald-150', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  'Cancelled': { bg: 'bg-red-50 border-red-150', text: 'text-red-700', dot: 'bg-red-500' },
-  'Pending': { bg: 'bg-amber-50 border-amber-150', text: 'text-amber-700', dot: 'bg-amber-500' },
+  'Scheduled': { bg: 'bg-blue-50/60 border-l-[3px] border-l-blue-500 border-y border-r border-blue-200/50', text: 'text-blue-800', dot: 'bg-blue-500' },
+  'Completed': { bg: 'bg-emerald-50/60 border-l-[3px] border-l-emerald-500 border-y border-r border-emerald-200/50', text: 'text-emerald-800', dot: 'bg-emerald-500' },
+  'Cancelled': { bg: 'bg-red-50/60 border-l-[3px] border-l-red-500 border-y border-r border-red-200/50', text: 'text-red-800', dot: 'bg-red-500' },
+  'Pending': { bg: 'bg-amber-50/60 border-l-[3px] border-l-amber-500 border-y border-r border-amber-200/50', text: 'text-amber-800', dot: 'bg-amber-500' },
 };
 
 export default function Calendar() {
@@ -38,6 +38,22 @@ export default function Calendar() {
   const [search, setSearch] = useState('');
   const [currentView, setCurrentView] = useState('Month'); // Month, Week, Day, Agenda
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setCurrentView('Agenda');
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    if (window.innerWidth < 768) {
+      setCurrentView('Agenda');
+    }
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -270,6 +286,21 @@ export default function Calendar() {
     return groups;
   }, [filteredMeetings]);
 
+  // Group events by date sorted chronologically for Agenda view
+  const groupedMeetingsByDate = useMemo(() => {
+    const groups = {};
+    filteredMeetings.forEach(m => {
+      if (!groups[m.date]) groups[m.date] = [];
+      groups[m.date].push(m);
+    });
+    return Object.keys(groups)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map(date => ({
+        date,
+        meetings: groups[date].sort((a, b) => a.startTime.localeCompare(b.startTime))
+      }));
+  }, [filteredMeetings]);
+
   const viewMonthName = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   // Format Time Helper
@@ -286,59 +317,61 @@ export default function Calendar() {
         title="Calendar"
         subtitle="Workspace appointments, matchmaking coordinates, and scheduling logs"
         actions={
-          <button onClick={() => openCreateModal()} className="btn btn-primary btn-sm gap-1.5 shadow-xs">
+          <button onClick={() => openCreateModal()} className="btn btn-accent btn-sm gap-1.5 shadow-xs">
             <Plus size={13} strokeWidth={2.5} /> Schedule Meeting
           </button>
         }
       />
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-6 space-y-6">
 
         {/* Navigation Controls & Search Toolbar */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-3">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200/80 pb-4">
 
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-bold text-gray-900 w-44 tracking-tight leading-none truncate">
+          <div className="flex items-center gap-3.5">
+            <h2 className="text-xl font-extrabold text-gray-900 w-52 tracking-tight leading-none truncate bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               {viewMonthName}
             </h2>
 
-            <div className="flex gap-1.5">
-              <button onClick={handlePrev} className="w-7 h-7 rounded border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
-                <ChevronLeft size={14} />
+            <div className="flex gap-1">
+              <button onClick={handlePrev} className="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-all shadow-3xs active:scale-95" title="Previous Month">
+                <ChevronLeft size={15} />
               </button>
-              <button onClick={handleToday} className="px-2.5 h-7 rounded border border-gray-200 bg-white hover:bg-gray-50 text-[11px] font-bold text-gray-500 hover:text-gray-800 transition-colors">
+              <button onClick={handleToday} className="px-3 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-600 hover:text-gray-900 transition-all shadow-3xs active:scale-95">
                 Today
               </button>
-              <button onClick={handleNext} className="w-7 h-7 rounded border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors">
-                <ChevronRight size={14} />
+              <button onClick={handleNext} className="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-all shadow-3xs active:scale-95" title="Next Month">
+                <ChevronRight size={15} />
               </button>
             </div>
           </div>
 
           <div className="flex items-center gap-3 self-stretch md:self-auto flex-wrap">
             {/* View selectors */}
-            <div className="flex border border-gray-200 rounded-lg p-0.5 bg-white shadow-3xs">
-              {['Month', 'Agenda'].map(view => (
-                <button
-                  key={view}
-                  onClick={() => setCurrentView(view)}
-                  className={`px-3 py-1 text-xs font-semibold rounded-md transition-all ${currentView === view
-                      ? 'bg-gray-900 text-white shadow-xs'
-                      : 'text-gray-500 hover:text-gray-800'
-                    }`}
-                >
-                  {view}
-                </button>
-              ))}
-            </div>
+            {!isMobile && (
+              <div className="flex border border-gray-200 bg-gray-50/50 rounded-lg p-0.5 shadow-3xs">
+                {['Month', 'Agenda'].map(view => (
+                  <button
+                    key={view}
+                    onClick={() => setCurrentView(view)}
+                    className={`px-3.5 py-1 text-xs font-bold rounded-md transition-all ${currentView === view
+                        ? 'bg-gray-900 text-white shadow-xs'
+                        : 'text-gray-500 hover:text-gray-800'
+                      }`}
+                  >
+                    {view}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Search inputs */}
-            <div className="relative w-full sm:w-56">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <div className="relative w-full sm:w-60">
+              <Search size={13.5} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search appointments..."
-                className="input input-sm pl-8.5"
+                className="input input-sm pl-9 hover:border-gray-300 focus:border-indigo-500 transition-colors"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
               />
@@ -348,26 +381,26 @@ export default function Calendar() {
 
         {/* Calendar Body */}
         {loading ? (
-          <div className="grid grid-cols-7 border border-gray-200 rounded-xl overflow-hidden bg-white">
+          <div className="grid grid-cols-7 border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
             {Array.from({ length: 42 }).map((_, i) => (
-              <div key={i} className="h-28 border border-gray-100 p-2 space-y-1">
-                <Skeleton className="h-3 w-5 rounded" />
-                <Skeleton className="h-8 w-full rounded" />
+              <div key={i} className="h-32 border border-gray-100 p-3 space-y-2">
+                <Skeleton className="h-3 w-6 rounded" />
+                <Skeleton className="h-8 w-full rounded-md" />
               </div>
             ))}
           </div>
         ) : currentView === 'Month' ? (
 
           /* ── Month Grid View ── */
-          <div className="border border-gray-200 rounded-xl overflow-hidden shadow-xs bg-white">
+          <div className="border border-border rounded-2xl overflow-hidden shadow-sm bg-[#FAFAF9]">
 
             {/* Weekdays names header */}
-            <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200 text-center font-bold text-[10px] text-gray-400 uppercase py-2 tracking-wider">
+            <div className="grid grid-cols-7 bg-white border-b border-border text-center font-semibold text-[11px] text-text-secondary uppercase py-3.5 tracking-wider">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => <span key={d}>{d}</span>)}
             </div>
 
             {/* Month Days */}
-            <div className="grid grid-cols-7">
+            <div className="grid grid-cols-7 gap-[1px] bg-border/60">
               {monthData.map((day, idx) => {
                 const dayMeetings = monthMeetingsGroup[day.dateStr] || [];
                 const isToday = day.dateStr === new Date().toISOString().split('T')[0];
@@ -375,8 +408,9 @@ export default function Calendar() {
                 return (
                   <div
                     key={idx}
-                    className={`min-h-28 border-r border-b border-gray-150 p-2 flex flex-col justify-between hover:bg-gray-50/30 transition-colors group cursor-pointer ${day.isCurrentMonth ? '' : 'bg-gray-50/10'
-                      }`}
+                    className={`min-h-36 p-3 flex flex-col justify-between hover:bg-gray-50/60 transition-all duration-200 group cursor-pointer relative ${
+                      day.isCurrentMonth ? 'bg-white' : 'bg-[#FAF9F6]/60'
+                    } ${isToday ? 'bg-accent/[0.03] ring-1 ring-inset ring-accent/30' : ''}`}
                     onClick={(e) => {
                       if (e.target === e.currentTarget) openCreateModal(day.dateStr);
                     }}
@@ -384,35 +418,39 @@ export default function Calendar() {
                     {/* Day indicator */}
                     <div className="flex items-center justify-between">
                       <span
-                        className={`text-xs font-semibold w-5 h-5 rounded-full flex items-center justify-center ${!day.isCurrentMonth ? 'text-gray-300' : 'text-gray-700'
-                          } ${isToday ? 'bg-[#4F46E5] text-white font-bold' : ''
-                          }`}
+                        className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center transition-all ${
+                          !day.isCurrentMonth
+                            ? 'text-text-muted/60'
+                            : isToday
+                              ? 'bg-accent text-white font-semibold shadow-sm'
+                              : 'text-text-primary group-hover:text-accent font-medium'
+                        }`}
                       >
                         {day.dayNum}
                       </span>
                       <button
                         onClick={() => openCreateModal(day.dateStr)}
-                        className="opacity-0 group-hover:opacity-100 w-5 h-5 rounded hover:bg-gray-150 flex items-center justify-center text-gray-400 hover:text-gray-800 transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-100 text-text-secondary hover:text-text-primary rounded-md transition-all duration-150 active:scale-95"
                         title="Add meeting to date"
                       >
-                        <Plus size={11} />
+                        <Plus size={12} />
                       </button>
                     </div>
 
                     {/* Day Meetings */}
-                    <div className="space-y-1 mt-1 flex-1 overflow-y-auto max-h-20 scrollbar-none">
+                    <div className="space-y-1.5 mt-2.5 flex-1 overflow-y-auto max-h-24 scrollbar-none">
                       {dayMeetings.map(m => {
                         const style = STATUS_CONFIG[m.status] || STATUS_CONFIG['Scheduled'];
                         return (
                           <div
                             key={m.id}
                             onClick={() => openEditModal(m)}
-                            className={`px-1.5 py-0.5 rounded border text-[9.5px] font-bold leading-tight truncate flex items-center gap-1 hover:shadow-2xs ${style.bg} ${style.text}`}
+                            className={`px-1.5 py-0.5 rounded-r-md rounded-l-xs text-[10px] font-semibold leading-normal truncate flex items-center gap-1.5 hover:shadow-2xs transition-all duration-150 active:scale-[0.98] ${style.bg} ${style.text}`}
                             title={`${m.title} (${m.startTime})`}
                           >
-                            <span className={`w-1 h-1 rounded-full ${style.dot}`} />
-                            <span className="opacity-90">{m.startTime}</span>
-                            <span>
+                            <span className={`w-1 h-1 rounded-full ${style.dot} shrink-0`} />
+                            <span className="opacity-80 font-mono tracking-tight shrink-0">{m.startTime}</span>
+                            <span className="truncate">
                               {m.c1 ? m.c1.firstName : 'Client'} & {m.c2 ? m.c2.firstName : 'Client'}
                             </span>
                           </div>
@@ -427,63 +465,115 @@ export default function Calendar() {
         ) : (
 
           /* ── Agenda View ── */
-          <div className="space-y-4">
-            {filteredMeetings.length === 0 ? (
+          <div className="space-y-6 max-w-5xl mx-auto py-2">
+            {groupedMeetingsByDate.length === 0 ? (
               <EmptyState
                 icon={CalendarIcon}
                 title="No meetings found"
                 description="Use the search bar above or schedule a new meeting."
               />
             ) : (
-              <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs divide-y divide-gray-150">
-                {filteredMeetings.map(m => {
-                  const style = STATUS_CONFIG[m.status] || STATUS_CONFIG['Scheduled'];
+              <div className="relative border-l border-border ml-4 pl-8 space-y-8">
+                {groupedMeetingsByDate.map((group) => {
+                  const dateObj = new Date(group.date);
+                  const weekday = dateObj.toLocaleDateString('default', { weekday: 'short' });
+                  const dayNum = dateObj.getDate();
+                  const monthName = dateObj.toLocaleDateString('default', { month: 'short' });
+
                   return (
-                    <div
-                      key={m.id}
-                      onClick={() => openEditModal(m)}
-                      className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 cursor-pointer transition-colors"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="p-2 bg-gray-100 rounded-lg text-gray-500 flex-shrink-0">
-                          <CalendarIcon size={18} />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-gray-800">{m.title}</h4>
-                          <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[10.5px] text-gray-400 font-semibold">
-                            <span className="flex items-center gap-1">
-                              <Clock size={10} />
-                              {m.date} at {formatTime(m.startTime)} – {formatTime(m.endTime)}
-                            </span>
-                            <span>·</span>
-                            <span className="flex items-center gap-1">
-                              <MapPin size={10} />
-                              {m.location || 'Google Meet'}
-                            </span>
-                          </div>
-                          {m.description && (
-                            <p className="text-[11px] text-gray-500 mt-1 leading-relaxed max-w-xl italic">
-                              "{m.description}"
-                            </p>
-                          )}
-                        </div>
+                    <div key={group.date} className="relative group/timeline">
+                      {/* Timeline dot badge on the left line */}
+                      <div className="absolute -left-[41px] top-1.5 w-6 h-6 rounded-full bg-white border-2 border-accent flex items-center justify-center shadow-3xs group-hover/timeline:scale-110 transition-transform duration-200">
+                        <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                       </div>
 
-                      {/* Clients involved */}
-                      <div className="flex items-center gap-4 flex-wrap sm:flex-nowrap">
-                        <div className="flex items-center gap-2">
-                          <div className="flex -space-x-2">
-                            <Avatar name={`${m.c1?.firstName || 'Client'} ${m.c1?.lastName || 'One'}`} photo={m.c1?.photo} size="xs" />
-                            <Avatar name={`${m.c2?.firstName || 'Client'} ${m.c2?.lastName || 'Two'}`} photo={m.c2?.photo} size="xs" />
-                          </div>
-                          <span className="text-xs text-gray-600 font-bold">
-                            {m.c1?.firstName || 'Client'} & {m.c2?.firstName || 'Client'}
-                          </span>
-                        </div>
+                      {/* Date Header for the group */}
+                      <div className="mb-4">
+                        <h3 className="text-xs font-semibold text-text-secondary flex items-baseline gap-2">
+                          <span className="text-base font-extrabold text-accent">{weekday}</span>
+                          <span className="text-text-muted/50">•</span>
+                          <span className="font-semibold text-text-primary">{monthName} {dayNum}</span>
+                        </h3>
+                      </div>
 
-                        <span className={`px-2 py-0.5 rounded border text-[10px] font-bold uppercase tracking-wider ${style.bg} ${style.text}`}>
-                          {m.status}
-                        </span>
+                      {/* Meetings list */}
+                      <div className="space-y-3.5">
+                        {group.meetings.map(m => {
+                          const style = STATUS_CONFIG[m.status] || STATUS_CONFIG['Scheduled'];
+                          return (
+                            <div
+                              key={m.id}
+                              onClick={() => openEditModal(m)}
+                              className="bg-white border border-border-subtle hover:border-border rounded-xl p-4 shadow-3xs hover:shadow-xs transition-all duration-200 cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-4"
+                            >
+                              <div className="flex items-start gap-4">
+                                <div className={`p-2.5 rounded-xl flex-shrink-0 flex items-center justify-center ${style.bg} ${style.text}`}>
+                                  <Clock size={16} />
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="text-sm font-bold text-text-primary tracking-tight">
+                                      {m.title}
+                                    </h4>
+                                    <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${style.bg} ${style.text}`}>
+                                      {m.status}
+                                    </span>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[11.5px] text-text-secondary font-medium">
+                                    <span className="flex items-center gap-1">
+                                      <Clock size={12} className="text-text-muted" />
+                                      {formatTime(m.startTime)} – {formatTime(m.endTime)}
+                                    </span>
+                                    <span className="text-text-muted/40">•</span>
+                                    <span className="flex items-center gap-1">
+                                      <MapPin size={12} className="text-text-muted" />
+                                      {m.location || 'Google Meet'}
+                                    </span>
+                                    {m.type && (
+                                      <>
+                                        <span className="text-text-muted/40">•</span>
+                                        <span className="text-text-muted">{m.type}</span>
+                                      </>
+                                    )}
+                                  </div>
+                                  {m.description && (
+                                    <p className="text-xs text-text-secondary italic bg-gray-50/50 border-l-2 border-border pl-3 py-1.5 mt-2 rounded-r-md max-w-2xl leading-relaxed">
+                                      "{m.description}"
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Clients involved */}
+                              <div className="flex items-center justify-between border-t border-border-subtle pt-3 md:border-none md:pt-0 gap-4">
+                                <div className="flex items-center gap-2.5">
+                                  <div className="flex -space-x-2">
+                                    <Avatar
+                                      name={`${m.c1?.firstName || 'Client'} ${m.c1?.lastName || 'One'}`}
+                                      photo={m.c1?.photo}
+                                      size="xs"
+                                      className="ring-2 ring-white"
+                                    />
+                                    <Avatar
+                                      name={`${m.c2?.firstName || 'Client'} ${m.c2?.lastName || 'Two'}`}
+                                      photo={m.c2?.photo}
+                                      size="xs"
+                                      className="ring-2 ring-white"
+                                    />
+                                  </div>
+                                  <div className="flex flex-col">
+                                    <span className="text-xs text-text-primary font-semibold">
+                                      {m.c1 ? `${m.c1.firstName} ${m.c1.lastName}` : 'Client One'}
+                                    </span>
+                                    <span className="text-[10px] text-text-muted">
+                                      & {m.c2 ? `${m.c2.firstName} ${m.c2.lastName}` : 'Client Two'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   );
@@ -506,23 +596,23 @@ export default function Calendar() {
             >
 
               {/* Header */}
-              <div className="px-6 py-5 border-b border-gray-150 flex items-center justify-between bg-gray-50/50">
+              <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between bg-gray-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-650 flex-shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-accent-soft border border-accent/10 flex items-center justify-center text-accent flex-shrink-0">
                     <CalendarIcon size={18} />
                   </div>
                   <div>
-                    <h3 className="text-base font-bold text-gray-900 tracking-tight">
+                    <h3 className="text-base font-bold text-text-primary tracking-tight">
                       {selectedMeeting ? 'Modify Appointment' : 'Schedule Matchmaker Meeting'}
                     </h3>
-                    <p className="text-xs text-gray-500 font-medium mt-0.5">
+                    <p className="text-xs text-text-muted font-medium mt-0.5">
                       Configure matches synchronization parameters
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="w-8 h-8 rounded-lg hover:bg-gray-150 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-lg hover:bg-gray-100 text-text-secondary hover:text-text-primary flex items-center justify-center transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -667,13 +757,12 @@ export default function Calendar() {
               </form>
 
               {/* Actions Footer */}
-              <div className="px-6 py-4.5 border-t border-gray-150 flex items-center justify-between bg-gray-50">
+              <div className="px-6 py-4.5 border-t border-border-subtle flex items-center justify-between bg-gray-50">
                 {selectedMeeting ? (
                   <button
                     type="button"
                     onClick={handleDelete}
-                    className="btn btn-secondary border-red-200 text-red-655 hover:bg-red-50 hover:border-red-300 gap-1.5 font-bold shadow-sm"
-                    style={{ color: '#ef4444' }}
+                    className="btn btn-danger gap-1.5 font-bold shadow-sm"
                   >
                     <Trash2 size={13} /> Cancel Event
                   </button>
@@ -686,14 +775,12 @@ export default function Calendar() {
                     type="button"
                     onClick={() => setIsModalOpen(false)}
                     className="btn btn-secondary font-semibold"
-                    style={{ color: '#374151', backgroundColor: '#ffffff', borderColor: '#d1d5db' }}
                   >
                     Close
                   </button>
                   <button
                     onClick={handleSave}
-                    className="btn btn-primary font-bold shadow-sm bg-indigo-650 hover:bg-indigo-700 border-indigo-650 text-white"
-                    style={{ color: '#ffffff' }}
+                    className="btn btn-primary font-bold shadow-sm"
                   >
                     {selectedMeeting ? 'Update Appointment' : 'Schedule Meeting'}
                   </button>

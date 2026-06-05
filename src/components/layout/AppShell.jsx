@@ -53,7 +53,7 @@ export default function AppShell() {
 
       {/* Main Content Container */}
       <main
-        className="flex-1 min-h-screen overflow-y-auto"
+        className="flex-1 min-h-screen overflow-y-auto main-content"
         style={{
           marginLeft: sidebarExpanded ? 'var(--sb-expanded)' : 'var(--sb-collapsed)',
           transition: 'margin-left var(--sb-duration) var(--sb-easing)',

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 
-export default function ScoreBreakdown({ breakdown = [] }) {
+export default function ScoreBreakdown({ breakdown = [], className = "space-y-3.5" }) {
   const getStatusLabel = (pct) => {
     if (pct >= 90) return { text: 'Optimal Alignment', color: '#059669', bg: '#ECFDF5', border: '#D1FAE5' };
     if (pct >= 75) return { text: 'Strong Alignment', color: '#047857', bg: '#ECFDF5', border: '#A7F3D0' };
@@ -11,7 +11,7 @@ export default function ScoreBreakdown({ breakdown = [] }) {
   };
 
   return (
-    <div className="space-y-3.5">
+    <div className={className}>
       {breakdown.map(({ factor, earned, max }) => {
         const pct = Math.round((earned / max) * 100);
         const status = getStatusLabel(pct);

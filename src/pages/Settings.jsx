@@ -318,7 +318,7 @@ export default function Settings() {
 
         <Card className="p-6 space-y-6">
           <CardSection label="Age Gap Preference">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <RangeSlider label="Minimum Age Gap" value={matchmaking.minAgeGap} min={0} max={15} unit=" yrs"
                 onChange={v => setMatchmaking(p => ({ ...p, minAgeGap: v }))} />
               <RangeSlider label="Maximum Age Gap" value={matchmaking.maxAgeGap} min={0} max={15} unit=" yrs"
@@ -452,7 +452,7 @@ export default function Settings() {
 
         <Card className="p-6 space-y-8">
           <CardSection label="Color Theme">
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {[
                 { value: 'light',  label: 'Light',  preview: 'bg-white border-gray-300',    dot: 'bg-gray-800' },
                 { value: 'dark',   label: 'Dark',   preview: 'bg-gray-900 border-gray-700', dot: 'bg-white' },
@@ -481,7 +481,7 @@ export default function Settings() {
           <Divider />
 
           <CardSection label="Layout Density">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { value: 'comfortable', label: 'Comfortable', desc: 'More breathing room between elements' },
                 { value: 'compact',     label: 'Compact',     desc: 'Tighter spacing to see more content' },
@@ -534,7 +534,7 @@ export default function Settings() {
           <Divider />
 
           <CardSection label="Actions">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button onClick={handleResetPassword}
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-sm font-semibold text-gray-700 transition-colors">
                 <KeyRound size={15} />
@@ -557,7 +557,7 @@ export default function Settings() {
         <SectionHeader icon={Database} title="Database Operations" color="slate"
           description="View live collection statistics and export your data in CSV or PDF format." />
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 gap-4">
           {[
             { label: 'Total Profiles',  value: dbStats.totalProfiles,  icon: Users,    color: 'indigo' },
             { label: 'Verified',         value: dbStats.verifiedProfiles, icon: ShieldCheck, color: 'emerald' },
@@ -646,22 +646,17 @@ export default function Settings() {
               <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Last AI Inference</p>
               <p className="text-sm font-semibold text-gray-700 mt-0.5">{health.lastAiRequest}</p>
             </div>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
-              <Sparkles size={14} />
-            </div>
           </div>
         </Card>
       </div>
     ),
   };
 
-  const activeTabMeta = TABS.find(t => t.id === activeTab);
-
   return (
-    <div className="flex min-h-screen bg-[#FAFAF8]">
+    <div className="flex flex-col lg:flex-row min-h-screen bg-[#FAFAF8] relative">
 
-      {/* ── Left sidebar nav ── */}
-      <aside className="w-56 shrink-0 border-r border-gray-200 bg-white flex flex-col py-6 sticky top-0 h-screen overflow-y-auto">
+      {/* ── Left sidebar nav (Desktop only) ── */}
+      <aside className="hidden lg:flex w-56 shrink-0 border-r border-gray-200 bg-white flex-col py-6 sticky top-0 h-screen overflow-y-auto">
         <div className="px-4 mb-6">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center">
@@ -678,7 +673,7 @@ export default function Settings() {
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group ${
-                  active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-650 hover:bg-gray-100 hover:text-gray-900'
                 }`}>
                 <tab.icon size={15} className={active ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600'} />
                 <span className={`text-[13px] font-${active ? 'semibold' : 'medium'} truncate`}>{tab.label}</span>
@@ -704,34 +699,55 @@ export default function Settings() {
         </div>
       </aside>
 
-      {/* ── Main content ── */}
-      <main className="flex-1 overflow-y-auto pb-28">
-        <div className="max-w-2xl mx-auto px-8 py-10">
-          {panels[activeTab]}
-        </div>
-      </main>
+      {/* Mobile Top Navigation Tab Bar (Sticky below mobile top navbar) */}
+      <div className="lg:hidden bg-white border-b border-gray-200 px-4 py-3 flex gap-2 overflow-x-auto sticky top-14 z-20 scrollbar-none">
+        {TABS.map(tab => {
+          const active = tab.id === activeTab;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                active ? 'bg-indigo-600 text-white shadow-sm' : 'bg-gray-100 text-gray-650 hover:bg-gray-200'
+              }`}
+            >
+              <tab.icon size={12} />
+              <span>{tab.label}</span>
+            </button>
+          );
+        })}
+      </div>
 
-      {/* ── Sticky save bar ── */}
-      <div className={`fixed bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur border-t border-gray-200 px-6 flex items-center justify-between z-40 transition-all duration-200 ${
-        hasChanges ? 'shadow-lg' : 'shadow-none opacity-80'
-      }`}>
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <SlidersHorizontal size={14} className="text-gray-400" />
-          <span>Editing <span className="font-semibold text-gray-700">{activeTabMeta?.label}</span></span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={handleReset} disabled={!hasChanges || saving}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
-            <RotateCcw size={13} />
-            Revert
-          </button>
-          <button onClick={handleSave} disabled={!hasChanges || saving}
-            className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
-            {saving
-              ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              : <Save size={13} />}
-            Save Changes
-          </button>
+      {/* ── Main content + Sticky Save Bar container ── */}
+      <div className="flex-1 flex flex-col min-h-0 relative">
+        <main className="flex-1 overflow-y-auto pb-28">
+          <div className="max-w-2xl mx-auto px-4 sm:px-8 py-6 sm:py-10">
+            {panels[activeTab]}
+          </div>
+        </main>
+
+        {/* ── Sticky save bar (Confined to this column) ── */}
+        <div className={`sticky bottom-0 left-0 right-0 h-16 bg-white/90 backdrop-blur border-t border-gray-200 px-6 flex items-center justify-between z-30 transition-all duration-200 ${
+          hasChanges ? 'shadow-lg' : 'shadow-none opacity-80'
+        }`}>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <SlidersHorizontal size={14} className="text-gray-400" />
+            <span>Editing <span className="font-semibold text-gray-700">{activeTabMeta?.label}</span></span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={handleReset} disabled={!hasChanges || saving}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 bg-white text-sm font-semibold text-gray-650 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+              <RotateCcw size={13} />
+              Revert
+            </button>
+            <button onClick={handleSave} disabled={!hasChanges || saving}
+              className="flex items-center gap-1.5 px-5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm">
+              {saving
+                ? <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                : <Save size={13} />}
+              Save Changes
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -181,11 +181,11 @@ export default function Dashboard() {
         subtitle={formatDate()}
       />
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-6 space-y-6">
 
         {/* ── KPI Cards (Reports Snapshot) ── */}
         {preferences.showReportsSnapshot !== false && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {kpis.map((kpi, idx) => (
               <motion.div
                 key={kpi.label}
@@ -510,7 +510,7 @@ export default function Dashboard() {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 divide-x divide-gray-100">
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
             {loading ? (
               [1, 2, 3, 4, 5].map(i => (
                 <div key={i} className="p-5 flex flex-col items-center gap-3">

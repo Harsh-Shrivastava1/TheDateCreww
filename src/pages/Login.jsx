@@ -33,7 +33,7 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col lg:flex-row bg-[#FAFAF9] font-sans overflow-hidden relative">
+    <div className="min-h-screen lg:h-screen w-full flex flex-col lg:flex-row bg-[#FAFAF9] font-sans overflow-y-auto lg:overflow-hidden relative">
 
       {/* ── Top Left Brand Name ── */}
       <div className="absolute top-6 left-8 flex items-center gap-2 z-20 select-none">
@@ -143,8 +143,8 @@ export default function Login() {
                 />
                 <input
                   type="email"
-                  className="input pl-10 py-2 bg-white border-gray-200 hover:border-gray-300 focus:border-gray-900 transition-colors rounded-lg"
-                  style={{ height: '42px', fontSize: '14px' }}
+                  className="input pl-10 py-2 bg-white border-gray-200 hover:border-gray-300 focus:border-gray-900 transition-colors rounded-lg min-h-[44px]"
+                  style={{ height: '44px', fontSize: '14px' }}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="Enter your email"
@@ -166,8 +166,8 @@ export default function Login() {
                 />
                 <input
                   type={showPw ? 'text' : 'password'}
-                  className="input pl-10 pr-10 py-2 bg-white border-gray-200 hover:border-gray-300 focus:border-gray-900 transition-colors rounded-lg"
-                  style={{ height: '42px', fontSize: '14px' }}
+                  className="input pl-10 pr-10 py-2 bg-white border-gray-200 hover:border-gray-300 focus:border-gray-900 transition-colors rounded-lg min-h-[44px]"
+                  style={{ height: '44px', fontSize: '14px' }}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="Enter your password"
@@ -205,8 +205,8 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="btn btn-primary w-full py-2 font-semibold text-[13.5px] justify-center mt-4 transition-all shadow-sm rounded-lg"
-              style={{ height: '42px', background: '#111827', color: '#FFFFFF' }}
+              className="btn btn-primary w-full py-2 font-semibold text-[13.5px] justify-center mt-4 transition-all shadow-sm rounded-lg min-h-[44px]"
+              style={{ height: '44px', background: '#111827', color: '#FFFFFF' }}
             >
               {loading ? (
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

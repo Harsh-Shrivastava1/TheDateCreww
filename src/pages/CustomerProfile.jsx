@@ -111,6 +111,15 @@ export default function CustomerProfile() {
   const { activities, loading: actLoading, reload: reloadActivities } = useActivities(id);
 
   const [activeTab, setActiveTab] = useState('Overview');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [mobileMatchDetailOpen, setMobileMatchDetailOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [editingStatus, setEditingStatus] = useState(false);
   const [newStatus, setNewStatus] = useState('');
   const [aiSummary, setAiSummary] = useState('');
@@ -485,7 +494,7 @@ export default function CustomerProfile() {
   return (
     <div className="bg-[#FAFAF9] min-h-screen">
       {/* ── Page header ────────────────────────────────────── */}
-      <div className="px-8 pt-6 pb-0 border-b border-gray-200 bg-white">
+      <div className="px-4 sm:px-8 pt-6 pb-0 border-b border-gray-200 bg-white">
         <button
           className="btn btn-ghost btn-sm gap-1.5 text-gray-400 -ml-2 mb-4 hover:text-gray-700"
           onClick={() => navigate('/customers')}
@@ -496,15 +505,15 @@ export default function CustomerProfile() {
         {/* Profile Header Block */}
         <div className="flex flex-col gap-4 pb-6">
           {/* Top row: avatar + identity + status badges */}
-          <div className="flex items-start gap-4">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
             <Avatar
               name={`${customer.firstName} ${customer.lastName}`}
               photo={customer.photo}
               size="xl"
-              className="ring-4 ring-gray-50 shadow-sm rounded-xl"
+              className="ring-4 ring-gray-50 shadow-sm rounded-xl flex-shrink-0"
             />
-            <div className="space-y-1 flex-1 min-w-0">
-              <div className="flex items-center gap-3.5 flex-wrap">
+            <div className="space-y-1 flex-1 min-w-0 flex flex-col items-center sm:items-start w-full">
+              <div className="flex items-center gap-3.5 flex-wrap justify-center sm:justify-start">
                 <h1 className="text-xl font-bold text-gray-900 tracking-tight leading-none">
                   {customer.firstName} {customer.lastName}
                 </h1>
@@ -541,7 +550,7 @@ export default function CustomerProfile() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500 font-medium">
+              <div className="flex flex-wrap items-center gap-1.5 text-xs text-gray-500 font-medium justify-center sm:justify-start">
                 <span>{customer.designation || 'Specialist'}</span>
                 {customer.company && (
                   <>
@@ -560,7 +569,7 @@ export default function CustomerProfile() {
               </div>
 
               {/* Tag Badges row */}
-              <div className="flex flex-wrap gap-1.5 mt-2">
+              <div className="flex flex-wrap gap-1.5 mt-2 justify-center sm:justify-start">
                 <span className="px-2 py-0.5 bg-gray-50 border border-gray-150 text-gray-500 rounded-full text-[10.5px] font-bold">
                   {customer.age} yrs
                 </span>
@@ -712,7 +721,7 @@ export default function CustomerProfile() {
       </div>
 
       {/* ── Main content area ────────────────────────────────── */}
-      <div className="px-8 py-6 max-w-7xl mx-auto">
+      <div className="px-4 sm:px-8 py-6 w-full">
         
         {/* Next Action Box - persistent workspace helper */}
         {nextAction && (
@@ -834,9 +843,9 @@ export default function CustomerProfile() {
                   </div>
                 </div>
 
-                {/* Micro activities feed */}
-                <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs">
-                  <div className="px-4.5 py-4 border-b border-gray-150 flex items-center justify-between bg-gray-50">
+                 {/* Micro activities feed */}
+                 <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs">
+                   <div className="px-4.5 py-4 border-b border-gray-150 flex items-center justify-between bg-gray-50">
                     <h3 className="text-xs font-bold text-gray-800">Dossier Activity Audit</h3>
                   </div>
                   <div className="p-4.5">
@@ -854,159 +863,213 @@ export default function CustomerProfile() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
-              className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs"
+              className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full"
             >
               {matchesLoading ? (
-                <div className="flex flex-col items-center justify-center py-20">
+                <div className="lg:col-span-12 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col items-center justify-center py-20">
                   <span className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                   <p className="text-xs text-gray-400 font-semibold mt-3">Computing weighted alignment scores...</p>
                 </div>
               ) : !matchesComputed ? (
-                <div className="py-20 text-center max-w-sm mx-auto">
-                  <Heart size={36} className="text-gray-300 mx-auto mb-4 animate-pulse" />
+                <div className="lg:col-span-12 bg-white border border-gray-200 rounded-2xl shadow-sm py-20 text-center max-w-sm mx-auto px-6">
+                  <Heart size={36} className="text-red-400 mx-auto mb-4 animate-pulse" />
                   <h3 className="text-sm font-bold text-gray-800">Find Compatible Candidates</h3>
-                  <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+                  <p className="text-xs text-gray-500 mt-2 leading-relaxed">
                     Compute matchmaking compatibility using the algorithmic engine, matching religio-demographic traits, lifestyles, and preferences.
                   </p>
-                  <button onClick={computeMatches} className="btn btn-primary btn-sm mt-5 gap-1.5 font-bold shadow-xs">
+                  <button onClick={computeMatches} className="btn btn-accent btn-sm mt-5 gap-1.5 font-bold shadow-xs">
                     <Sparkles size={13} /> Compute Compatibility Matches
                   </button>
                 </div>
               ) : matches.length === 0 ? (
-                <div className="py-20 text-center">
+                <div className="lg:col-span-12 bg-white border border-gray-200 rounded-2xl shadow-sm py-20 text-center">
                   <p className="text-xs text-gray-400">No compatible match found inside database constraints.</p>
                 </div>
               ) : (
-                /* Split Pane View */
-                <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[600px] divide-y lg:divide-y-0 lg:divide-x divide-gray-200">
-                  
+                <>
                   {/* Left Column: Match Candidates List */}
-                  <div className="lg:col-span-5 flex flex-col max-h-[700px] overflow-y-auto">
-                    <div className="p-4 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Generated Compatible Matches ({matches.length})</span>
-                      <button onClick={computeMatches} className="p-1 hover:bg-gray-200 rounded text-gray-400 transition-colors" title="Regenerate Compatibility Engine">
-                        <RefreshCw size={12} />
-                      </button>
-                    </div>
+                  {(!isMobile || !mobileMatchDetailOpen) && (
+                    <div className="lg:col-span-4 bg-white border border-gray-200 rounded-2xl shadow-sm flex flex-col max-h-[800px] overflow-hidden sticky top-6 w-full">
+                      <div className="p-4 bg-gray-50/75 border-b border-gray-200 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Compatible Matches</span>
+                          <span className="px-1.5 py-0.5 text-[9px] bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-md font-bold">
+                            {matches.length}
+                          </span>
+                        </div>
+                        <button onClick={computeMatches} className="p-1.5 hover:bg-gray-250/60 rounded-lg text-gray-400 hover:text-gray-700 transition-colors" title="Regenerate Compatibility Engine">
+                          <RefreshCw size={12.5} />
+                        </button>
+                      </div>
 
-                    <div className="divide-y divide-gray-150">
-                      {matches.map((item, idx) => {
-                        const { profile, score, label } = item;
-                        const isSelected = selectedMatch?.profile.id === profile.id;
-                        
-                        return (
-                          <div
-                            key={profile.id}
-                            onClick={() => setSelectedMatch(item)}
-                            className={`p-4 flex items-center gap-3.5 cursor-pointer hover:bg-gray-50/50 transition-colors ${
-                              isSelected ? 'bg-indigo-50/20 border-l-4 border-indigo-600 pl-3' : 'border-l-4 border-transparent'
+                      <div className="divide-y divide-gray-100 overflow-y-auto flex-1">
+                        {matches.map((item, idx) => {
+                          const { profile, score, label } = item;
+                          const isSelected = selectedMatch?.profile.id === profile.id;
+                          
+                          return (
+                            <div
+                              key={profile.id}
+                              onClick={() => {
+                                setSelectedMatch(item);
+                                if (isMobile) {
+                                  setMobileMatchDetailOpen(true);
+                                }
+                              }}
+                            className={`p-4 flex items-center gap-3.5 cursor-pointer transition-all duration-150 border-l-4 ${
+                              isSelected
+                                ? 'bg-indigo-50/15 border-indigo-650 shadow-[inset_1px_0_0_0_rgba(99,102,241,0.08)]'
+                                : 'border-transparent hover:bg-gray-50/40'
                             }`}
                           >
-                            <ScoreRing score={score} size={40} strokeWidth={2.5} />
+                            <ScoreRing score={score} size={42} strokeWidth={2.5} />
                             
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-2">
-                                <p className="text-xs font-bold text-gray-800 truncate">{profile.firstName} {profile.lastName}</p>
-                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${
-                                  score >= 75 ? 'bg-emerald-50 text-emerald-700' : score >= 55 ? 'bg-blue-50 text-blue-700' : 'bg-amber-50 text-amber-700'
+                                <p className={`text-xs font-bold truncate ${isSelected ? 'text-indigo-950' : 'text-gray-800'}`}>{profile.firstName} {profile.lastName}</p>
+                                <span className={`text-[8.5px] font-extrabold px-1.5 py-0.5 rounded-full uppercase tracking-wider ${
+                                  score >= 75
+                                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                                    : score >= 55
+                                      ? 'bg-blue-50 text-blue-700 border border-blue-100'
+                                      : 'bg-amber-50 text-amber-700 border border-amber-100'
                                 }`}>
                                   {label}
                                 </span>
                               </div>
                               
-                              <p className="text-[10.5px] text-gray-400 truncate mt-0.5">{profile.designation}</p>
+                              <p className="text-[10.5px] text-gray-400 truncate mt-0.5 font-medium">{profile.designation}</p>
                               
-                              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400 font-semibold">
-                                <span>{profile.age} yrs</span>
+                              <div className="flex items-center gap-2 mt-2 text-[10px] text-gray-400 font-semibold">
+                                <span className="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 font-bold">{profile.age} yrs</span>
                                 <span>·</span>
-                                <span>{profile.city}</span>
+                                <span className="truncate">{profile.city}</span>
                                 <span>·</span>
                                 <span>{profile.religion}</span>
                               </div>
                             </div>
                           </div>
                         );
-                      })}
+                        })}
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   {/* Right Column: Active Match AI Intelligence & Action Panel */}
-                  <div className="lg:col-span-7 flex flex-col bg-gray-50/20 max-h-[700px] overflow-y-auto">
-                    {selectedMatch ? (
-                      <div className="p-6 space-y-6">
+                  {(!isMobile || mobileMatchDetailOpen) && (
+                    <div className="lg:col-span-8 flex flex-col gap-6 max-h-[800px] overflow-y-auto pr-1 w-full">
+                      {isMobile && mobileMatchDetailOpen && (
+                        <button
+                          onClick={() => setMobileMatchDetailOpen(false)}
+                          className="btn btn-secondary btn-sm mb-4 gap-1.5 w-fit"
+                        >
+                          ← Back to Candidates List
+                        </button>
+                      )}
+                      {selectedMatch ? (
+                      <div className="space-y-6">
                         
                         {/* Profile Hero card */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-3xs flex flex-col sm:flex-row items-center gap-4">
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row items-center gap-5 relative overflow-hidden bg-gradient-to-br from-indigo-50/30 via-purple-50/10 to-white">
+                          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-200/10 to-purple-200/10 rounded-full blur-2xl pointer-events-none" />
+                          
                           <Avatar
                             name={`${selectedMatch.profile.firstName} ${selectedMatch.profile.lastName}`}
                             photo={selectedMatch.profile.photo}
-                            size="lg"
-                            className="ring-2 ring-gray-100 rounded-lg shadow-sm"
+                            size="xl"
+                            className="ring-4 ring-white shadow-md rounded-xl"
                           />
-                          <div className="flex-1 min-w-0 text-center sm:text-left">
-                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="flex-1 min-w-0 text-center sm:text-left z-10 w-full">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                               <div>
-                                <h3 className="text-sm font-bold text-gray-900">
-                                  {selectedMatch.profile.firstName} {selectedMatch.profile.lastName}
-                                </h3>
-                                <p className="text-xs text-gray-500 mt-0.5">{selectedMatch.profile.designation} at {selectedMatch.profile.company || 'Private Corporation'}</p>
+                                <div className="flex items-center gap-2 justify-center sm:justify-start">
+                                  <h3 className="text-base font-bold text-gray-900 tracking-tight">
+                                    {selectedMatch.profile.firstName} {selectedMatch.profile.lastName}
+                                  </h3>
+                                  <a
+                                    href={`/customers/${selectedMatch.profile.id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-gray-400 hover:text-indigo-650 transition-colors"
+                                    title="View Candidate Dossier"
+                                  >
+                                    <ArrowUpRight size={14} />
+                                  </a>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-0.5 font-medium">{selectedMatch.profile.designation} at <span className="font-semibold text-gray-700">{selectedMatch.profile.company || 'Private Corporation'}</span></p>
                               </div>
                               <button
                                 onClick={() => setSendModal({ open: true, match: selectedMatch })}
-                                className="btn btn-primary btn-sm gap-1.5 font-bold shadow-xs bg-indigo-600 border-indigo-600 hover:bg-indigo-700 hover:border-indigo-700"
+                                className="btn btn-accent btn-sm gap-1.5 font-bold shadow-xs hover:scale-[1.01] transition-transform"
                               >
-                                Send Proposal Match
+                                <ArrowUpRight size={13} className="stroke-[3px]" />
+                                <span>Send Proposal Match</span>
                               </button>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-1.5 mt-3 text-[10px] font-bold text-gray-500 justify-center sm:justify-start">
-                              <span className="px-2 py-0.5 bg-gray-50 border border-gray-150 rounded">{selectedMatch.profile.religion} ({selectedMatch.profile.caste})</span>
-                              <span className="px-2 py-0.5 bg-gray-50 border border-gray-150 rounded">{selectedMatch.profile.maritalStatus}</span>
-                              <span className="px-2 py-0.5 bg-gray-50 border border-gray-150 rounded">{selectedMatch.profile.height}</span>
-                              {selectedMatch.profile.income && <span className="px-2 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded font-mono">{formatIncome(selectedMatch.profile.income)}</span>}
+                            <div className="flex flex-wrap items-center gap-1.5 mt-4 text-[10px] font-bold justify-center sm:justify-start">
+                              <span className="px-2.5 py-1 bg-blue-50/70 text-blue-700 border border-blue-100/70 rounded-lg">{selectedMatch.profile.religion} ({selectedMatch.profile.caste})</span>
+                              <span className="px-2.5 py-1 bg-purple-50/70 text-purple-700 border border-purple-100/70 rounded-lg">{selectedMatch.profile.maritalStatus}</span>
+                              <span className="px-2.5 py-1 bg-amber-50/70 text-amber-700 border border-amber-100/70 rounded-lg">{selectedMatch.profile.height}</span>
+                              {selectedMatch.profile.income && <span className="px-2.5 py-1 bg-emerald-50/70 text-emerald-700 border border-emerald-100/70 rounded-lg font-mono">{formatIncome(selectedMatch.profile.income)}</span>}
                             </div>
                           </div>
                         </div>
 
                         {/* Quantitative matching breakdown */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-3xs space-y-4">
-                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Algorithmic Match Breakdowns</h4>
-                          <ScoreBreakdown breakdown={selectedMatch.breakdown} />
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+                          <div className="flex items-center gap-2 border-b border-gray-100 pb-3">
+                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Algorithmic Match Breakdowns</h4>
+                          </div>
+                          <ScoreBreakdown
+                            breakdown={selectedMatch.breakdown}
+                            className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4"
+                          />
                         </div>
 
                         {/* Qualitative AI compatibility reasoning */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-3xs space-y-4">
-                          <h4 className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-2">
-                            <Sparkles size={11} className="text-indigo-600" />
-                            AI Compatibility Intelligence
-                          </h4>
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-5">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <h4 className="text-[10.5px] font-bold text-indigo-600 uppercase tracking-wider flex items-center gap-1.5">
+                              <Sparkles size={12} className="text-indigo-500" />
+                              AI Compatibility Intelligence
+                            </h4>
+                            <span className="text-[9px] font-bold bg-indigo-50 border border-indigo-100 text-indigo-650 rounded px-1.5 py-0.5 uppercase tracking-wide">
+                              Simulation Active
+                            </span>
+                          </div>
                           {matchAILoading.analysis ? (
-                            <div className="flex items-center gap-2 py-2">
-                              <span className="w-3.5 h-3.5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                            <div className="flex flex-col items-center justify-center py-10 gap-2">
+                              <span className="w-6 h-6 border-2 border-indigo-650 border-t-transparent rounded-full animate-spin" />
                               <span className="text-xs text-gray-400 font-semibold">Running compatibility simulation...</span>
                             </div>
                           ) : matchAnalysis ? (
-                            <div className="space-y-4.5">
+                            <div className="space-y-5">
                               {/* Executive Summary */}
                               {matchAnalysis.summary && (
-                                <p className="text-[12.5px] text-gray-600 leading-relaxed font-semibold">
-                                  {matchAnalysis.summary}
-                                </p>
+                                <div className="border-l-4 border-indigo-500 pl-4 py-1">
+                                  <p className="text-[12.5px] text-gray-700 leading-relaxed font-semibold italic">
+                                    "{matchAnalysis.summary}"
+                                  </p>
+                                </div>
                               )}
 
                               {/* Strengths & Concerns Grid */}
                               {(matchAnalysis.strengths?.length > 0 || matchAnalysis.concerns?.length > 0) && (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-50">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                   {matchAnalysis.strengths?.length > 0 && (
-                                    <div className="space-y-2">
-                                      <p className="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider">Strengths & Shared Values</p>
-                                      <div className="space-y-2">
+                                    <div className="bg-emerald-50/20 border border-emerald-100/70 p-4.5 rounded-xl space-y-3">
+                                      <p className="text-[9.5px] font-bold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                        Strengths & Shared Values
+                                      </p>
+                                      <div className="space-y-2.5">
                                         {matchAnalysis.strengths.map((s, idx) => (
                                           <div key={idx} className="flex items-start gap-2">
                                             <div className="w-4 h-4 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0 mt-0.5">
                                               <Check size={9} className="text-emerald-600" strokeWidth={3} />
                                             </div>
-                                            <span className="text-[12px] text-gray-700 font-semibold leading-snug">{s}</span>
+                                            <span className="text-[11.5px] text-gray-700 font-semibold leading-snug">{s}</span>
                                           </div>
                                         ))}
                                       </div>
@@ -1014,15 +1077,18 @@ export default function CustomerProfile() {
                                   )}
 
                                   {matchAnalysis.concerns?.length > 0 && (
-                                    <div className="space-y-2">
-                                      <p className="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider">Areas to Discuss</p>
-                                      <div className="space-y-2">
+                                    <div className="bg-amber-50/20 border border-amber-100/70 p-4.5 rounded-xl space-y-3">
+                                      <p className="text-[9.5px] font-bold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                        Areas to Discuss
+                                      </p>
+                                      <div className="space-y-2.5">
                                         {matchAnalysis.concerns.map((c, idx) => (
                                           <div key={idx} className="flex items-start gap-2">
                                             <div className="w-4 h-4 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                              <span className="text-amber-600 text-[10px] font-bold leading-none">•</span>
+                                              <span className="text-amber-655 text-[10px] font-extrabold leading-none">•</span>
                                             </div>
-                                            <span className="text-[12px] text-gray-600 font-semibold leading-snug">{c}</span>
+                                            <span className="text-[11.5px] text-gray-700 font-semibold leading-snug">{c}</span>
                                           </div>
                                         ))}
                                       </div>
@@ -1033,13 +1099,13 @@ export default function CustomerProfile() {
 
                               {/* Recommendation Callout */}
                               {matchAnalysis.recommendation && (
-                                <div className="mt-3.5 p-3.5 bg-indigo-50/50 border border-indigo-100 rounded-xl flex items-center justify-between gap-3">
-                                  <div className="min-w-0">
-                                    <p className="text-[9.5px] font-bold text-indigo-500 uppercase tracking-wider">AI Matching Strategy Advisory</p>
-                                    <p className="text-xs text-indigo-900 font-bold mt-0.5 truncate">{matchAnalysis.recommendation}</p>
+                                <div className="p-4 bg-gradient-to-r from-indigo-50/60 via-purple-50/30 to-indigo-50/40 border border-indigo-100 rounded-xl flex items-center justify-between gap-4 shadow-3xs">
+                                  <div className="min-w-0 space-y-0.5">
+                                    <p className="text-[9px] font-bold text-indigo-500 uppercase tracking-wider">AI Matching Strategy Advisory</p>
+                                    <p className="text-xs text-indigo-950 font-bold leading-normal">{matchAnalysis.recommendation}</p>
                                   </div>
-                                  <div className="p-1.5 rounded-lg bg-indigo-100 text-indigo-600 flex-shrink-0">
-                                    <Sparkles size={13} />
+                                  <div className="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-650 flex items-center justify-center flex-shrink-0 shadow-3xs">
+                                    <Sparkles size={14} />
                                   </div>
                                 </div>
                               )}
@@ -1052,38 +1118,40 @@ export default function CustomerProfile() {
                         </div>
 
                         {/* Risk evaluation panel */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-3xs space-y-3">
-                          <h4 className="text-[10px] font-bold text-amber-600 uppercase tracking-wider flex items-center gap-1.5 border-b border-gray-100 pb-2">
-                            <AlertTriangle size={11} className="text-amber-500" />
-                            Lifestyle Mismatch Warning assessment
-                          </h4>
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-3">
+                          <div className="flex items-center gap-1.5 border-b border-gray-100 pb-2.5">
+                            <AlertTriangle size={13} className="text-amber-500" />
+                            <h4 className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">
+                              Lifestyle Mismatch Warning Assessment
+                            </h4>
+                          </div>
                           {matchAILoading.flags ? (
                             <div className="flex items-center gap-2 py-2">
-                              <span className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                              <span className="w-3.5 h-3.5 border-2 border-amber-550 border-t-transparent rounded-full animate-spin" />
                               <span className="text-xs text-gray-400 font-semibold">Cross-referencing constraints...</span>
                             </div>
                           ) : matchRedFlagsText ? (
-                            <div className="p-3.5 bg-amber-50/40 border border-amber-100/70 rounded-xl flex items-start gap-2.5">
-                              <AlertCircle size={15} className="text-amber-600 mt-0.5 flex-shrink-0" />
-                              <p className="text-xs text-amber-900 leading-relaxed font-semibold">
+                            <div className="p-4 bg-amber-50/30 border border-amber-100/60 rounded-xl flex items-start gap-3">
+                              <AlertCircle size={16} className="text-amber-650 mt-0.5 flex-shrink-0" />
+                              <p className="text-xs text-amber-950 leading-relaxed font-semibold">
                                 {matchRedFlagsText}
                               </p>
                             </div>
                           ) : (
-                            <p className="text-xs text-gray-450 font-semibold italic">
+                            <p className="text-xs text-gray-400 font-medium italic">
                               No risk evaluation present.
                             </p>
                           )}
                         </div>
 
                         {/* Personalized Template Message Generator */}
-                        <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-3xs space-y-3">
-                          <div className="flex items-center justify-between">
+                        <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm space-y-4">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">AI Icebreaker Proposal Draft</h4>
                             {!matchIntroText && !matchAILoading.intro && (
                               <button
                                 onClick={handleGenerateIntroText}
-                                className="btn btn-ghost btn-xs text-indigo-600 font-bold hover:bg-indigo-50"
+                                className="btn btn-ghost btn-xs text-indigo-650 font-bold hover:bg-indigo-50"
                               >
                                 Generate Icebreaker
                               </button>
@@ -1092,12 +1160,12 @@ export default function CustomerProfile() {
 
                           {matchAILoading.intro ? (
                             <div className="flex items-center gap-2 py-2">
-                              <span className="w-3.5 h-3.5 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+                              <span className="w-3.5 h-3.5 border-2 border-indigo-650 border-t-transparent rounded-full animate-spin" />
                               <span className="text-xs text-gray-400 font-semibold">Generating customized introductory icebreaker...</span>
                             </div>
                           ) : matchIntroText ? (
-                            <div className="p-3 bg-gray-50 border border-gray-100 rounded-lg relative group/copy">
-                              <p className="text-xs text-gray-600 leading-relaxed italic pr-8">
+                            <div className="p-4 bg-gray-50/50 border border-gray-200 rounded-xl relative group/copy bg-gradient-to-br from-gray-50/80 to-white shadow-3xs">
+                              <p className="text-xs text-gray-700 leading-relaxed italic pr-10 font-medium">
                                 "{matchIntroText}"
                               </p>
                               <button
@@ -1106,25 +1174,25 @@ export default function CustomerProfile() {
                                   setCopiedIntro(true);
                                   setTimeout(() => setCopiedIntro(false), 2000);
                                 }}
-                                className="absolute top-2.5 right-2.5 w-6 h-6 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-colors"
+                                className="absolute top-3 right-3 w-7 h-7 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 text-gray-400 hover:text-gray-700 flex items-center justify-center transition-all shadow-3xs hover:shadow-2xs active:scale-95"
                               >
-                                {copiedIntro ? <CheckCircle size={12} className="text-emerald-500" /> : <Copy size={11} />}
+                                {copiedIntro ? <CheckCircle size={13} className="text-emerald-500" /> : <Copy size={12} />}
                               </button>
                             </div>
                           ) : (
-                            <p className="text-xs text-gray-400">Generate a personalized draft introducing {selectedMatch.profile.firstName} to {customer.firstName}.</p>
+                            <p className="text-xs text-gray-400 font-medium">Generate a personalized draft introducing {selectedMatch.profile.firstName} to {customer.firstName}.</p>
                           )}
                         </div>
 
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center h-full text-center p-8">
-                        <p className="text-xs text-gray-400">Select a candidate on the left to analyze alignment parameters.</p>
+                      <div className="bg-white border border-gray-200 rounded-2xl flex items-center justify-center h-[400px] text-center p-8 shadow-sm">
+                        <p className="text-xs text-gray-400 font-medium">Select a candidate on the left to analyze alignment parameters.</p>
                       </div>
                     )}
                   </div>
-
-                </div>
+                  )}
+                </>
               )}
             </motion.div>
           )}

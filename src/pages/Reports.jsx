@@ -154,10 +154,10 @@ export default function Reports() {
         subtitle="Operational reports, compatibility stats, and matchmaking conversion channels"
       />
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-6 space-y-6">
         
         {/* Report Cards Row */}
-        <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
             { label: 'Total Profiles', value: metrics.total, icon: Users, color: 'text-indigo-600', bg: 'bg-indigo-50' },
             { label: 'Active Matches', value: metrics.active, icon: Heart, color: 'text-pink-600', bg: 'bg-pink-50' },
@@ -319,8 +319,9 @@ export default function Reports() {
           {/* growth area chart */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs">
             <h3 className="text-sm font-bold text-gray-900 tracking-tight mb-4">Monthly Registered Growth</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="overflow-x-auto scrollbar-none w-full">
+              <div className="h-64 min-w-[450px] md:min-w-0">
+                <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chartData.growth} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="growthGrad" x1="0" y1="0" x2="0" y2="1">
@@ -336,13 +337,15 @@ export default function Reports() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+            </div>
           </div>
 
           {/* match conversion bar chart */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs">
             <h3 className="text-sm font-bold text-gray-900 tracking-tight mb-4">Match conversions by stage</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="overflow-x-auto scrollbar-none w-full">
+              <div className="h-64 min-w-[450px] md:min-w-0">
+                <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={chartData.conversion} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#9CA3AF" fontSize={11} tickLine={false} />
@@ -352,13 +355,15 @@ export default function Reports() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+            </div>
           </div>
 
           {/* meeting trends line chart */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs">
             <h3 className="text-sm font-bold text-gray-900 tracking-tight mb-4">Monthly meetings scheduled</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="overflow-x-auto scrollbar-none w-full">
+              <div className="h-64 min-w-[450px] md:min-w-0">
+                <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData.meetings} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
                   <XAxis dataKey="name" stroke="#9CA3AF" fontSize={11} tickLine={false} />
@@ -368,14 +373,16 @@ export default function Reports() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
+            </div>
           </div>
 
           {/* demographic distribution charts */}
           <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-xs flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-bold text-gray-900 tracking-tight mb-4">City Distribution (Top 5 cities)</h3>
-              <div className="h-44">
-                <ResponsiveContainer width="100%" height="100%">
+              <div className="overflow-x-auto scrollbar-none w-full">
+                <div className="h-44 min-w-[450px] md:min-w-0">
+                  <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData.city} layout="vertical" margin={{ top: 0, right: 10, left: -10, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E5E7EB" />
                     <XAxis type="number" stroke="#9CA3AF" fontSize={10} tickLine={false} />
@@ -384,6 +391,7 @@ export default function Reports() {
                     <Bar dataKey="value" fill="#10B981" radius={[0, 4, 4, 0]} barSize={12} />
                   </BarChart>
                 </ResponsiveContainer>
+              </div>
               </div>
             </div>
 

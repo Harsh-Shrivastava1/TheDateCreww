@@ -523,6 +523,23 @@
     letter-spacing: -0.01em;
   }
 
+  /* Mobile Overlay (Backdrop for drawer) */
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 17, 23, 0.45);
+    backdrop-filter: blur(4.5px);
+    -webkit-backdrop-filter: blur(4.5px);
+    z-index: 45;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--sb-duration) var(--sb-easing);
+  }
+  .mobile-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   /* ── Sidebar ─────────────────────────────────────────────── */
   :root {
     --sb-collapsed: 68px;
@@ -604,11 +621,6 @@
     transition: margin-left var(--sb-duration) var(--sb-easing);
   }
 
-  @media (min-width: 1024px) {
-    .main-content {
-      margin-left: var(--sb-collapsed) !important;
-    }
-  }
 
   @media (min-width: 768px) and (max-width: 1023px) {
     .main-content.sidebar-expanded {
@@ -745,6 +757,13 @@
     display: flex;
     border-bottom: 1px solid #E8E8E5;
     gap: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+  }
+  .tab-list::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
   }
 
   .tab-item {

@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -76,6 +76,13 @@ function getNextAction(status, name) {
 export default function Customers() {
   const navigate = useNavigate();
   const { customers, loading, error } = useCustomers();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const [search, setSearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -152,7 +159,7 @@ export default function Customers() {
       />
 
       {/* Main split-pane workspace */}
-      <div className="flex-1 px-8 py-6 flex gap-6 items-stretch min-h-0 overflow-hidden">
+      <div className="flex-1 px-4 sm:px-8 py-6 flex gap-6 items-stretch min-h-0 overflow-hidden">
         
         {/* Left Side: Filter Panels + Grid */}
         <div className="flex-1 flex flex-col space-y-4 min-w-0">
@@ -191,8 +198,7 @@ export default function Customers() {
             </button>
           </div>
 
-          {/* Core Content Layout split between side filter & candidate cards */}
-          <div className="flex-1 flex gap-5 min-h-0">
+          <div className="flex-1 flex gap-5 min-h-0 relative">
             {/* Contextual Filters Panel */}
             <AnimatePresence>
               {showFilters && (
@@ -200,7 +206,9 @@ export default function Customers() {
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 240 }}
                   exit={{ opacity: 0, width: 0 }}
-                  className="card p-5 bg-white border border-[#E8E8E5] overflow-y-auto max-h-[70vh] flex-shrink-0 scrollbar-none shadow-3xs rounded-2xl"
+                  className={`card p-5 bg-white border border-[#E8E8E5] overflow-y-auto max-h-[70vh] flex-shrink-0 scrollbar-none shadow-3xs rounded-2xl ${
+                    isMobile ? 'absolute left-0 top-0 z-20 w-[240px] shadow-lg border border-gray-200' : 'relative'
+                  }`}
                 >
                   <div className="flex justify-between items-center mb-5">
                     <span className="text-[13px] font-bold text-[#0F1117] tracking-tight">Filters</span>
@@ -321,7 +329,13 @@ export default function Customers() {
                     return (
                       <div
                         key={c.id}
-                        onClick={() => setSelectedCustomerId(c.id)}
+                        onClick={() => {
+                          if (isMobile) {
+                            navigate(`/customers/${c.id}`);
+                          } else {
+                            setSelectedCustomerId(c.id);
+                          }
+                        }}
                         className={`card p-4 bg-white border cursor-pointer hover:border-[#BEBEBE] hover:shadow-xs transition-all duration-200 relative ${
                           isSelected ? 'border-[#5B5EF4] ring-1 ring-[#5B5EF4] shadow-sm' : 'border-[#E8E8E5]'
                         }`}
@@ -375,7 +389,7 @@ export default function Customers() {
 
         {/* Right Side: Split detail intelligence preview panel */}
         <AnimatePresence>
-          {activeCustomer && (
+          {activeCustomer && !isMobile && (
             <motion.div
               initial={{ opacity: 0, x: 20, width: 0 }}
               animate={{ opacity: 1, x: 0, width: 360 }}
