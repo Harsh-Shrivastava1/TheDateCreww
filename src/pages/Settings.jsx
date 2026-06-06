@@ -33,6 +33,12 @@ const TABS = [
 ];
 
 /* ────────────────── HELPERS ────────────────── */
+const SUPPORTED_THEME = 'light';
+
+function normalizeTheme(theme) {
+  return theme === SUPPORTED_THEME ? theme : SUPPORTED_THEME;
+}
+
 function Toggle({ checked, onChange }) {
   return (
     <button
@@ -105,6 +111,26 @@ function SectionHeader({ icon: Icon, title, description, color = 'indigo' }) {
   );
 }
 
+const THEME_OPTIONS = [
+  { value: 'light', label: 'Light', preview: 'bg-white border-gray-300', dot: 'bg-gray-800', disabled: false },
+  {
+    value: 'dark',
+    label: 'Dark',
+    preview: 'bg-gray-900 border-gray-700',
+    dot: 'bg-white',
+    disabled: true,
+    note: 'Will be implemented in a future update.',
+  },
+  {
+    value: 'system',
+    label: 'System',
+    preview: 'bg-gradient-to-br from-white to-gray-900 border-gray-400',
+    dot: 'bg-gray-400',
+    disabled: true,
+    note: 'Will be implemented in a future update.',
+  },
+];
+
 function Card({ children, className = '' }) {
   return (
     <div className={`bg-white rounded-2xl border border-gray-200/80 shadow-sm ${className}`}>
@@ -168,7 +194,7 @@ export default function Settings() {
     showActivityFeed: true, showReportsSnapshot: true, showConversionFunnel: true,
   });
   const [appearance, setAppearance] = useState(() => ({
-    theme: localStorage.getItem('tdc_theme') || 'light',
+    theme: normalizeTheme(localStorage.getItem('tdc_theme') || SUPPORTED_THEME),
     density: localStorage.getItem('tdc_density') || 'comfortable',
   }));
   const [dbStats, setDbStats] = useState({ totalProfiles: 0, verifiedProfiles: 0, matchesCreated: 0, activitiesLogged: 0 });
@@ -217,18 +243,28 @@ export default function Settings() {
 
   // ── Helpers ──
   const applyTheme = v => {
-    if (v === 'dark' || (v === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches))
+    const theme = normalizeTheme(v);
+    if (theme !== SUPPORTED_THEME) {
       document.documentElement.classList.add('dark');
-    else document.documentElement.classList.remove('dark');
+      return;
+    }
+    document.documentElement.classList.remove('dark');
   };
   const applyDensity = v => {
     if (v === 'compact') document.documentElement.classList.add('compact-mode');
     else document.documentElement.classList.remove('compact-mode');
   };
   const handleAppearanceChange = (key, val) => {
+    if (key === 'theme') {
+      const nextTheme = normalizeTheme(val);
+      setAppearance(p => ({ ...p, [key]: nextTheme }));
+      localStorage.setItem('tdc_theme', nextTheme);
+      applyTheme(nextTheme);
+      return;
+    }
     setAppearance(p => ({ ...p, [key]: val }));
-    if (key === 'theme') { localStorage.setItem('tdc_theme', val); applyTheme(val); }
-    else { localStorage.setItem('tdc_density', val); applyDensity(val); }
+    localStorage.setItem('tdc_density', val);
+    applyDensity(val);
   };
 
   // ── Save ──
@@ -454,28 +490,61 @@ export default function Settings() {
         <Card className="p-6 space-y-8">
           <CardSection label="Color Theme">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {[
-                { value: 'light',  label: 'Light',  preview: 'bg-white border-gray-300',    dot: 'bg-gray-800' },
-                { value: 'dark',   label: 'Dark',   preview: 'bg-gray-900 border-gray-700', dot: 'bg-white' },
-                { value: 'system', label: 'System', preview: 'bg-gradient-to-br from-white to-gray-900 border-gray-400', dot: 'bg-gray-400' },
-              ].map(t => (
-                <button key={t.value} onClick={() => handleAppearanceChange('theme', t.value)}
-                  className={`relative flex flex-col gap-2 items-start p-4 rounded-xl border-2 transition-all text-left ${
-                    appearance.theme === t.value ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300 bg-white'
-                  }`}>
-                  <div className={`w-full h-12 rounded-lg border ${t.preview}`}>
-                    <div className={`w-3 h-3 rounded-full m-2 ${t.dot}`} />
-                  </div>
-                  <span className={`text-xs font-bold ${appearance.theme === t.value ? 'text-indigo-600' : 'text-gray-600'}`}>
-                    {t.label}
-                  </span>
-                  {appearance.theme === t.value && (
-                    <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center">
-                      <CheckCircle2 size={10} className="text-white" />
+              {THEME_OPTIONS.map(t => {
+                const isSelected = appearance.theme === t.value;
+                const sharedClasses = `relative flex flex-col gap-2 items-start p-4 rounded-xl border-2 transition-all text-left ${
+                  isSelected ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 bg-white'
+                }`;
+
+                if (t.disabled) {
+                  return (
+                    <div key={t.value} className="group relative">
+                      <button
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        className={`${sharedClasses} cursor-not-allowed opacity-70 w-full`}
+                      >
+                        <div className={`w-full h-12 rounded-lg border ${t.preview}`}>
+                          <div className={`w-3 h-3 rounded-full m-2 ${t.dot}`} />
+                        </div>
+                        <span className={`text-xs font-bold ${isSelected ? 'text-indigo-600' : 'text-gray-600'}`}>
+                          {t.label}
+                        </span>
+                        {isSelected && (
+                          <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center">
+                            <CheckCircle2 size={10} className="text-white" />
+                          </span>
+                        )}
+                      </button>
+                      <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-max max-w-[14rem] -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white shadow-lg opacity-0 transition-opacity group-hover:opacity-100">
+                        {t.note}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    key={t.value}
+                    type="button"
+                    onClick={() => handleAppearanceChange('theme', t.value)}
+                    className={`${sharedClasses} hover:border-gray-300`}
+                  >
+                    <div className={`w-full h-12 rounded-lg border ${t.preview}`}>
+                      <div className={`w-3 h-3 rounded-full m-2 ${t.dot}`} />
+                    </div>
+                    <span className={`text-xs font-bold ${isSelected ? 'text-indigo-600' : 'text-gray-600'}`}>
+                      {t.label}
                     </span>
-                  )}
-                </button>
-              ))}
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 w-4 h-4 rounded-full bg-indigo-600 flex items-center justify-center">
+                        <CheckCircle2 size={10} className="text-white" />
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </CardSection>
 
