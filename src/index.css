@@ -85,6 +85,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.007em;
+    color-scheme: light;
   }
 
   body {
