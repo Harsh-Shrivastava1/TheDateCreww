@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400;1,14..32,500&display=swap');
 @import "tailwindcss";
 
+/* Force light mode — override Tailwind v4's media-based dark variant
+   with class-based. Since .dark is never added to <html>, dark: styles
+   never activate regardless of the user's OS/browser theme setting. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================
    TDC MATCHMAKER PRO — DESIGN SYSTEM v3
    Aesthetic: Linear × Attio × Notion — warm, premium, human
